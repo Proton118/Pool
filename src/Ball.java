@@ -6,7 +6,20 @@ public class Ball implements ICollider {
     private float acceleration;
     private float frictionConstant;
     private float mass;
+    private Color color;
+    private int ballNumber;
 
+    public Ball(Color color, int ballNumber, float radius, Vector position, float mass, float frictionConstant) {
+        this.radius = radius;
+        this.position = position;
+        this.mass = mass;
+        this.velocity = 0;
+        this.velocityDirection = new Vector(0, 0);
+        this.acceleration = 0;
+        this.frictionConstant = frictionConstant;
+        this.color = color;
+        this.ballNumber = ballNumber;
+    }
     public Ball(float radius, Vector position, float mass, float frictionConstant) {
         this.radius = radius;
         this.position = position;
@@ -15,6 +28,8 @@ public class Ball implements ICollider {
         this.velocityDirection = new Vector(0, 0);
         this.acceleration = 0;
         this.frictionConstant = frictionConstant;
+        this.color = Color.WHITE;
+        this.ballNumber = -1;
     }
 
     /**
@@ -134,7 +149,7 @@ public class Ball implements ICollider {
     @Override
     public void OnCollision(ICollider other, Vector pointOfContact) {
         MoveToSurface(pointOfContact);
-        Bounce(other, pointOfContact);
+        Bounce(pointOfContact);
     }
 
     /**
@@ -153,18 +168,13 @@ public class Ball implements ICollider {
      * @param other          The other collider to bounce off of
      * @param pointOfContact The point of contact between the two colliders
      */
-    public void Bounce(ICollider other, Vector pointOfContact) {
-        switch (other.getClass().getSimpleName()) {
-            case "Ball":
-                Ball ball = (Ball) other;
-                Vector reflectionVector = ball.position.subtract(pointOfContact).normalize();
-                Vector projectionVector = reflectionVector.multiply((velocityDirection.dot(reflectionVector))
-                        /
-                        (reflectionVector.dot(reflectionVector)));
-                Vector newVelocityDirection = projectionVector.multiply(2).subtract(velocityDirection).multiply(-1);
-                velocityDirection = newVelocityDirection;
-                break;
-        }
+    public void Bounce(Vector pointOfContact) {
+        Vector reflectionVector = position.subtract(pointOfContact).normalize();
+        Vector projectionVector = reflectionVector.multiply((velocityDirection.dot(reflectionVector))
+                /
+                (reflectionVector.dot(reflectionVector)));
+        Vector newVelocityDirection = projectionVector.multiply(2).subtract(velocityDirection).multiply(-1);
+        velocityDirection = newVelocityDirection;
     }
 
     /**
@@ -195,5 +205,22 @@ public class Ball implements ICollider {
      */
     public Vector GetPosition() {
         return position;
+    }
+
+    /**
+     * The color of the ball
+     * 
+     * @return The color of the ball
+     */
+    public Color GetColor() {
+        return color;
+    }
+    /**
+     * The Number of the ball
+     * 
+     * @return The number of the ball
+     */
+    public int GetBallNumber() {
+        return ballNumber;
     }
 }

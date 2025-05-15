@@ -17,10 +17,10 @@ public class App extends PApplet {
     }
 
     public void setup() {
-        System.out.println("Screen size: " + width + "x" + height);
-        // colliders.add(new Ball(50, new Vector(width / 2 + 200, height / 2 + 10), 1, 0f));
-        colliders.add(new Ball(50, new Vector(width / 2 + 20, height / 2), 1, 2f).SetVelocity(new Vector(0,100)));
-        colliders.add(new Wall(new Vector(width / 2, height / 2 + 200), 20, 10));
+        colliders.add(new Ball(50, new Vector(width / 2 + 200, height / 2 + 150), 1, 0f));
+        colliders.add(new Ball(Color.RED, 8, 50, new Vector(width / 2 + 40, height / 2), 1, 2f)
+                .SetVelocity(new Vector(62, 150)));
+        colliders.add(new Wall(new Vector(width / 2, height / 2 + 300), 1000, 10));
 
         previousTime = System.currentTimeMillis();
     }
@@ -41,9 +41,8 @@ public class App extends PApplet {
         for (ICollider collider : colliders) {
             if (collider instanceof Ball) {
                 Ball ball = (Ball) collider;
-                circle(ball.GetPosition().x, ball.GetPosition().y, ball.GetRadius() * 2);
-            }
-            else if (collider instanceof Wall) {
+                DrawBall(ball);
+            } else if (collider instanceof Wall) {
                 Wall wall = (Wall) collider;
                 fill(255);
                 rect(wall.GetPosition().x - wall.GetWidth() / 2, wall.GetPosition().y - wall.GetHeight() / 2,
@@ -51,11 +50,27 @@ public class App extends PApplet {
             }
         }
     }
+
+    public void DrawBall(Ball ball) {
+        fill(ball.GetColor().r, ball.GetColor().g, ball.GetColor().b);
+        circle(ball.GetPosition().x, ball.GetPosition().y, ball.GetRadius() * 2);
+        if (ball.GetBallNumber() != -1) {
+            fill(255);
+            circle(ball.GetPosition().x, ball.GetPosition().y, ball.GetRadius() * 9.5f / 10);
+            fill(0);
+            textSize(40);
+            textAlign(CENTER, CENTER);
+            float textOffset = textAscent() / 2 - textDescent() / 2;
+            text(ball.GetBallNumber(), ball.GetPosition().x, ball.GetPosition().y + textOffset);
+        }
+    }
+
     public void UpdateColliders(float deltaTime) {
         for (ICollider collider : colliders) {
             collider.Update(deltaTime);
         }
     }
+
     public void CheckCollisions() {
         for (int i = 0; i < colliders.size(); i++) {
             ICollider colliderA = colliders.get(i);
