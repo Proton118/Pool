@@ -60,7 +60,7 @@ public class App extends PApplet {
             fill(0);
             textSize(40);
             textAlign(CENTER, CENTER);
-            text(ball.GetBallNumber(), ball.GetPosition().x, ball.GetPosition().y - 6.5f);
+            text(ball.GetBallNumber(), ball.GetPosition().x, ball.GetPosition().y - 6f);
         }
     }
 
