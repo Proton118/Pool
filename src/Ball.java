@@ -17,6 +17,11 @@ public class Ball implements ICollider {
         this.frictionConstant = frictionConstant;
     }
 
+    /**
+     * Update the ball's position and velocity based on the current acceleration
+     * 
+     * @param deltaTime The time since the last update
+     */
     @Override
     public void Update(float deltaTime) {
         acceleration = 0;
@@ -30,6 +35,12 @@ public class Ball implements ICollider {
         position = position.add(velocityDirection.multiply(velocity * deltaTime));
     }
 
+    /**
+     * Check if the ball is colliding with another collider
+     * 
+     * @param other The other collider to check for collision
+     * @return CollisionData containing collision information
+     */
     @Override
     public CollisionData IsCollidingWith(ICollider other) {
         switch (other.getClass().getSimpleName()) {
@@ -43,6 +54,12 @@ public class Ball implements ICollider {
         return new CollisionData(false);
     }
 
+    /**
+     * Handle collision with another ball
+     * 
+     * @param other The other ball to check for collision
+     * @return CollisionData containing collision information
+     */
     public CollisionData HandleBallCollision(Ball other) {
         float distance = position.subtract(other.position).magnitude();
         if (distance < radius + other.radius) {
@@ -53,6 +70,12 @@ public class Ball implements ICollider {
         return new CollisionData(false);
     }
 
+    /**
+     * Handle collision with a wall
+     * 
+     * @param wall The wall to check for collision
+     * @return CollisionData containing collision information
+     */
     public CollisionData HandleWallCollision(Wall wall) {
         Vector circleDistance = new Vector(Math.abs(position.x - wall.GetPosition().x),
                 Math.abs(position.y - wall.GetPosition().y));
@@ -89,21 +112,44 @@ public class Ball implements ICollider {
         return new CollisionData(false);
     }
 
+    /**
+     * Get the friction force acting on the ball
+     * 
+     * @param deltaTime The time since the last update
+     * @return The friction force
+     */
     public float GetFriction(float deltaTime) {
         return frictionConstant * mass * -9.81f;
     }
 
+    /**
+     * Handle collision with another collider
+     * 
+     * @param other          The other collider to handle collision with
+     * @param pointOfContact The point of contact between the two colliders
+     */
     @Override
     public void OnCollision(ICollider other, Vector pointOfContact) {
         MoveToSurface(pointOfContact);
         Bounce(other, pointOfContact);
     }
 
+    /**
+     * Move the ball to the surface of the collider it is colliding with
+     * 
+     * @param pointOfContact The point of contact between the two colliders
+     */
     public void MoveToSurface(Vector pointOfContact) {
         Vector direction = position.subtract(pointOfContact).normalize();
         position = pointOfContact.add(direction.multiply(radius));
     }
 
+    /**
+     * Bounce the ball off the collider it is colliding with
+     * 
+     * @param other          The other collider to bounce off of
+     * @param pointOfContact The point of contact between the two colliders
+     */
     public void Bounce(ICollider other, Vector pointOfContact) {
         switch (other.getClass().getSimpleName()) {
             case "Ball":
@@ -118,16 +164,32 @@ public class Ball implements ICollider {
         }
     }
 
+    /**
+     * Set the velocity of the ball
+     * 
+     * @param velocity The new velocity vector
+     * @return The current instance of the ball
+     */
     public ICollider SetVelocity(Vector velocity) {
         this.velocity = velocity.magnitude();
         this.velocityDirection = velocity.normalize();
         return this;
     }
 
+    /**
+     * The radius of the ball
+     * 
+     * @return The radius of the ball
+     */
     public float GetRadius() {
         return radius;
     }
 
+    /**
+     * The position of the ball
+     * 
+     * @return The position of the ball
+     */
     public Vector GetPosition() {
         return position;
     }
