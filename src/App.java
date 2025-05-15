@@ -19,8 +19,8 @@ public class App extends PApplet {
     public void setup() {
         System.out.println("Screen size: " + width + "x" + height);
         // colliders.add(new Ball(50, new Vector(width / 2 + 200, height / 2 + 10), 1, 0f));
-        colliders.add(new Ball(50, new Vector(width / 2, height / 2), 1, 2f).SetVelocity(new Vector(0,100)));
-        colliders.add(new Wall(new Vector(width / 2, height / 2 + 200), 1000, 10));
+        colliders.add(new Ball(50, new Vector(width / 2 + 20, height / 2), 1, 2f).SetVelocity(new Vector(0,100)));
+        colliders.add(new Wall(new Vector(width / 2, height / 2 + 200), 20, 10));
 
         previousTime = System.currentTimeMillis();
     }

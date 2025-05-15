@@ -105,8 +105,11 @@ public class Ball implements ICollider {
                 (circleDistance.y - wall.GetHeight() / 2) * (circleDistance.y - wall.GetHeight() / 2);
 
         if (cornerDist_sq <= (radius * radius)) {
-            Vector direction = position.subtract(wall.GetPosition()).normalize();
-            Vector pointOfContact = wall.GetPosition().add(direction.multiply(radius));
+            Vector pointOfContact = new Vector(position.x > wall.GetPosition().x ? 1 : -1,
+                    position.y > wall.GetPosition().y ? 1 : -1);
+            pointOfContact.x *= wall.GetWidth() / 2;
+            pointOfContact.y *= wall.GetHeight() / 2;
+            pointOfContact = wall.GetPosition().add(pointOfContact);
             return new CollisionData(true, pointOfContact);
         }
         return new CollisionData(false);
