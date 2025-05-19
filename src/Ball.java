@@ -149,7 +149,7 @@ public class Ball implements ICollider {
     @Override
     public void OnCollision(ICollider other, Vector pointOfContact) {
         MoveToSurface(pointOfContact);
-        Bounce(pointOfContact);
+        // Bounce(pointOfContact);
     }
 
     /**
@@ -188,6 +188,23 @@ public class Ball implements ICollider {
         this.velocityDirection = velocity.normalize();
         return this;
     }
+    public ICollider SetVelocity(float velocity) {
+        this.velocity = velocity;
+        if(velocity < 0){
+            this.velocity = -velocity;
+            this.velocityDirection = velocityDirection.multiply(-1);
+        }
+        return this;
+    }
+    public void SetVelocityDirection(Vector velocityDirection) {
+        this.velocityDirection = velocityDirection;
+    }
+    public Vector GetVelocityDirection() {
+        return velocityDirection;
+    }
+    public float GetVelocity() {
+        return velocity;
+    }
 
     /**
      * The radius of the ball
@@ -222,5 +239,9 @@ public class Ball implements ICollider {
      */
     public int GetBallNumber() {
         return ballNumber;
+    }
+
+    public float GetMass() {
+        return mass;
     }
 }
