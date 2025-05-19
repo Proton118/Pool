@@ -101,9 +101,10 @@ public class App extends PApplet {
                 stationaryBall = ballA;
             }
 
-            // movingBall.OnCollision(stationaryBall, collisionData.GetPointOfContact());
+            movingBall.OnCollision(stationaryBall, collisionData.GetPointOfContact());
+            stationaryBall.OnCollision(movingBall, collisionData.GetPointOfContact());
 
-            // movingBall.SetVelocity(movingBall.GetVelocity() * (1 - COLLISION_LOSS));
+            movingBall.SetVelocity(movingBall.GetVelocity() * (1 - COLLISION_LOSS));
             float stationaryBallVelocityFinal = (2 * movingBall.GetMass() * movingBall.GetVelocity() + stationaryBall.GetMass() * stationaryBall.GetVelocity()) / (movingBall.GetMass() + stationaryBall.GetMass());
             System.out.println(stationaryBallVelocityFinal);
 

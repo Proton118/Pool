@@ -79,7 +79,7 @@ public class Ball implements ICollider {
         float distance = position.subtract(other.position).magnitude();
         if (distance < radius + other.radius) {
             Vector direction = position.subtract(other.position).normalize();
-            Vector pointOfContact = other.position.add(direction.multiply(radius));
+            Vector pointOfContact = other.position.add(direction.multiply(other.GetRadius()));
             return new CollisionData(true, pointOfContact);
         }
         return new CollisionData(false);
