@@ -27,8 +27,24 @@ public class PhysicsEngine {
             ICollider colliderA = colliders.get(i);
             for (int j = i + 1; j < colliders.size(); j++) {
                 ICollider colliderB = colliders.get(j);
+                CheckCollision(colliderA, colliderB);
             }
         }
+    }
+
+    private void CheckCollision(ICollider a, ICollider b){
+        if(a instanceof Ball ballA && b instanceof Ball ballB){
+            CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
+            if(collisionData.GetCollided()){
+                HandleBallCollision(ballA, ballB, collisionData);
+            }
+        }
+
+        // if(a instanceof Wall wall && b instanceof Ball ball){
+        // }
+
+        // if(a instanceof Ball ball && b instanceof Wall wall){
+        // }
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {

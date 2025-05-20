@@ -1,13 +1,10 @@
 import java.util.ArrayList;
 
-import Utility.CollisionData;
 import Utility.Color;
 import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {
-    private static final float COLLISION_LOSS = 0.25f;
-
     private ArrayList<ICollider> colliders = new ArrayList<>();
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
@@ -41,7 +38,7 @@ public class App extends PApplet {
         previousTime = System.currentTimeMillis();
 
         physicsEngine.UpdateColliderPositions(deltaTime);
-        CheckCollisions();
+        physicsEngine.HandleCollisions();
         DrawColliders();
     }
 
@@ -74,16 +71,4 @@ public class App extends PApplet {
         }
     }
 
-    public void CheckCollisions() {
-        for (int i = 0; i < colliders.size(); i++) {
-            ICollider colliderA = colliders.get(i);
-            for (int j = i + 1; j < colliders.size(); j++) {
-                ICollider colliderB = colliders.get(j);
-                CollisionData collisionData = colliderA.IsCollidingWith(colliderB);
-                if (collisionData.GetCollided()) {
-                    physicsEngine.HandleBallCollision((Ball)colliderA, (Ball)colliderB, collisionData);
-                }
-            }
-        }
-    }
 }
