@@ -73,4 +73,8 @@ public class PhysicsEngine {
         stationaryBall.SetVelocityDirection(movingBall.GetVelocityDirection());
         movingBall.SetVelocity(movingBallVelocityFinal);
     }
+
+    public ArrayList<ICollider> GetColliders() {
+        return colliders;
+    }
 }

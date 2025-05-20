@@ -5,7 +5,6 @@ import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {
-    private ArrayList<ICollider> colliders = new ArrayList<>();
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
 
@@ -20,13 +19,9 @@ public class App extends PApplet {
     }
 
     public void setup() {
-        colliders.add(new Ball(55, new Vector(width / 2 + 200, height / 2), 5, 3f));
-        colliders.add(new Wall(new Vector(width / 2, height / 2 + 300), 1000, 10));
-        colliders.add(new Ball(Color.BLACK, 8, 50, new Vector(width / 2 + 40, height / 2), 5, 3).SetVelocity(new Vector(150, 0)));
-
-        for(ICollider collider : colliders) {
-            physicsEngine.AddCollider(collider);
-        }
+        physicsEngine.AddCollider(new Ball(55, new Vector(width / 2 + 200, height / 2), 5, 3f)).
+        AddCollider(new Wall(new Vector(width / 2, height / 2 + 300), 1000, 10)).
+        AddCollider(new Ball(Color.BLACK, 8, 50, new Vector(width / 2 + 40, height / 2), 5, 3).SetVelocity(new Vector(150, 0)));
 
         previousTime = System.currentTimeMillis();
     }
@@ -43,6 +38,7 @@ public class App extends PApplet {
     }
 
     public void DrawColliders() {
+        ArrayList<ICollider> colliders = physicsEngine.GetColliders();
         noStroke();
         for (ICollider collider : colliders) {
             if (collider instanceof Ball) {
