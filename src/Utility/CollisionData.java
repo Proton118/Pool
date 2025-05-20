@@ -1,3 +1,5 @@
+package Utility;
+
 public class CollisionData {
     private boolean collided;
     private Vector pointOfContact;

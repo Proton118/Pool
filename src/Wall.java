@@ -1,3 +1,6 @@
+import Utility.CollisionData;
+import Utility.Vector;
+
 public class Wall implements ICollider{
     private Vector position;
     private float width;

@@ -1,3 +1,7 @@
+import Utility.CollisionData;
+import Utility.Color;
+import Utility.Vector;
+
 public class Ball implements ICollider {
     private float radius;
     private Vector position;

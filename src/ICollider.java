@@ -1,3 +1,6 @@
+import Utility.CollisionData;
+import Utility.Vector;
+
 public interface ICollider {
     public abstract CollisionData IsCollidingWith(ICollider other);
     public default void OnCollision(ICollider other, Vector pointOfContact){

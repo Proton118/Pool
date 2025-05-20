@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import Utility.CollisionData;
+import Utility.Color;
+import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {

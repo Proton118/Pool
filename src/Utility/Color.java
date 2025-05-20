@@ -1,3 +1,4 @@
+package Utility;
 public class Color {
     public static final Color WHITE = new Color(255, 255, 255);
     public static final Color GRAY = new Color(128, 128, 128);
