@@ -64,10 +64,7 @@ public class PhysicsEngine {
 
         movingBall.SetVelocity(movingBall.GetVelocity() * (1 - COLLISION_LOSS));
         float stationaryBallVelocityFinal = (2 * movingBall.GetMass() * movingBall.GetVelocity() + stationaryBall.GetMass() * stationaryBall.GetVelocity()) / (movingBall.GetMass() + stationaryBall.GetMass());
-        System.out.println(stationaryBallVelocityFinal);
-
         float movingBallVelocityFinal = movingBall.GetVelocity() * (movingBall.GetMass() - stationaryBall.GetMass()) / (movingBall.GetMass() + stationaryBall.GetMass());
-        System.out.println(movingBallVelocityFinal);
 
         stationaryBall.SetVelocity(stationaryBallVelocityFinal);
         stationaryBall.SetVelocityDirection(movingBall.GetVelocityDirection());
