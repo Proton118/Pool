@@ -1,4 +1,3 @@
-import Utility.CollisionData;
 import Utility.Color;
 import Utility.Vector;
 
@@ -52,86 +51,6 @@ public class Ball implements ICollider {
         }
 
         position = position.add(velocityDirection.multiply(velocity * deltaTime));
-    }
-
-    /**
-     * Check if the ball is colliding with another collider
-     * 
-     * @param other The other collider to check for collision
-     * @return CollisionData containing collision information
-     */
-    @Override
-    public CollisionData IsCollidingWith(ICollider other) {
-        switch (other.getClass().getSimpleName()) {
-            case "Ball":
-                Ball ball = (Ball) other;
-                return HandleBallCollision(ball);
-            case "Wall":
-                Wall wall = (Wall) other;
-                return HandleWallCollision(wall);
-        }
-        return new CollisionData(false);
-    }
-
-    /**
-     * Handle collision with another ball
-     * 
-     * @param other The other ball to check for collision
-     * @return CollisionData containing collision information
-     */
-    public CollisionData HandleBallCollision(Ball other) {
-        float distance = position.subtract(other.position).magnitude();
-        if (distance < radius + other.radius) {
-            Vector direction = position.subtract(other.position).normalize();
-            Vector pointOfContact = other.position.add(direction.multiply(other.GetRadius()));
-            return new CollisionData(true, pointOfContact);
-        }
-        return new CollisionData(false);
-    }
-
-    /**
-     * Handle collision with a wall
-     * 
-     * @param wall The wall to check for collision
-     * @return CollisionData containing collision information
-     */
-    public CollisionData HandleWallCollision(Wall wall) {
-        Vector circleDistance = new Vector(Math.abs(position.x - wall.GetPosition().x),
-                Math.abs(position.y - wall.GetPosition().y));
-
-        if (Math.abs(circleDistance.x) > (wall.GetWidth() / 2 + radius)) {
-            return new CollisionData(false);
-        }
-        if (Math.abs(circleDistance.y) > (wall.GetHeight() / 2 + radius)) {
-            return new CollisionData(false);
-        }
-
-        if (circleDistance.x <= wall.GetWidth() / 2) {
-            int contactDirection = position.y > wall.GetPosition().y ? 1 : -1;
-            Vector pointOfContact = new Vector(position.x,
-                    wall.GetPosition().y + wall.GetHeight() / 2 * contactDirection);
-            return new CollisionData(true, pointOfContact);
-        }
-        if (circleDistance.y <= wall.GetHeight() / 2) {
-            int contactDirection = position.x > wall.GetPosition().x ? 1 : -1;
-            Vector pointOfContact = new Vector(wall.GetPosition().x + wall.GetWidth() / 2 * contactDirection,
-                    position.y);
-            return new CollisionData(true, pointOfContact);
-        }
-
-        float cornerDist_sq = (circleDistance.x - wall.GetWidth() / 2)
-                * (circleDistance.x - wall.GetWidth() / 2) +
-                (circleDistance.y - wall.GetHeight() / 2) * (circleDistance.y - wall.GetHeight() / 2);
-
-        if (cornerDist_sq <= (radius * radius)) {
-            Vector pointOfContact = new Vector(position.x > wall.GetPosition().x ? 1 : -1,
-                    position.y > wall.GetPosition().y ? 1 : -1);
-            pointOfContact.x *= wall.GetWidth() / 2;
-            pointOfContact.y *= wall.GetHeight() / 2;
-            pointOfContact = wall.GetPosition().add(pointOfContact);
-            return new CollisionData(true, pointOfContact);
-        }
-        return new CollisionData(false);
     }
 
     /**
