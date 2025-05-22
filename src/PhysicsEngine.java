@@ -4,7 +4,7 @@ import Utility.CollisionData;
 import Utility.Vector;
 
 public class PhysicsEngine {
-    private static final float COLLISION_LOSS = 0.25f;
+    private static final float COLLISION_LOSS = 0.15f;
 
     private ArrayList<ICollider> colliders;
 
@@ -49,27 +49,32 @@ public class PhysicsEngine {
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
-        Ball movingBall;
-        Ball stationaryBall;
+        Vector collisionAngle = CalculateCollisionAngle(ballA, ballB);
 
-        if(ballA.GetVelocity().x > ballB.GetVelocity().x){
-            movingBall = ballA;
-            stationaryBall = ballB;
-        } else {
-            movingBall = ballB;
-            stationaryBall = ballA;
-        }
-        System.out.println(CalculateCollisionAngle(ballA, ballB));
+        Vector velocityA = ballA.GetVelocity();
+        Vector velocityB = ballB.GetVelocity();
 
-        movingBall.OnCollision(stationaryBall, collisionData.GetPointOfContact());
-        stationaryBall.OnCollision(movingBall, collisionData.GetPointOfContact());
+        float velocityANormal = velocityA.x *collisionAngle.x + velocityA.y * collisionAngle.y;
+        float velocityATangent = velocityA.x * -collisionAngle.y + velocityA.y * collisionAngle.x;
 
-        movingBall.SetVelocity(movingBall.GetVelocity().x * (1 - COLLISION_LOSS));
-        float stationaryBallVelocityFinal = (2 * movingBall.GetMass() * movingBall.GetVelocity().x + stationaryBall.GetMass() * stationaryBall.GetVelocity().x) / (movingBall.GetMass() + stationaryBall.GetMass());
-        float movingBallVelocityFinal = movingBall.GetVelocity().x * (movingBall.GetMass() - stationaryBall.GetMass()) / (movingBall.GetMass() + stationaryBall.GetMass());
+        float velocityBNormal = velocityB.x *collisionAngle.x + velocityB.y * collisionAngle.y;
+        float velocityBTangent = velocityB.x * -collisionAngle.y + velocityB.y * collisionAngle.x;
 
-        stationaryBall.SetVelocity(movingBall.GetVelocity().normalize().multiply(stationaryBallVelocityFinal));
-        movingBall.SetVelocity(movingBallVelocityFinal);
+        float newVelocityANormal = velocityANormal * (ballA.GetMass() - ballB.GetMass()) + 2 * ballB.GetMass() * velocityBNormal
+                                                                                            /
+                                                                        (ballA.GetMass() + ballB.GetMass());
+        float newVelocityBNormal = velocityBNormal * (ballB.GetMass() - ballA.GetMass()) + 2 * ballA.GetMass() * velocityANormal
+                                                                                            /
+                                                                        (ballA.GetMass() + ballB.GetMass());
+
+        float newVelocityAX = newVelocityANormal * collisionAngle.x - velocityATangent * collisionAngle.y;
+        float newVelocityAY = newVelocityANormal * collisionAngle.y + velocityATangent * collisionAngle.x;
+
+        float newVelocityBX = newVelocityBNormal * collisionAngle.x - velocityBTangent * collisionAngle.y;
+        float newVelocityBY = newVelocityBNormal * collisionAngle.y + velocityBTangent * collisionAngle.x;
+
+        ballA.SetVelocity(new Vector(newVelocityAX, newVelocityAY).multiply(1 - COLLISION_LOSS));
+        ballB.SetVelocity(new Vector(newVelocityBX, newVelocityBY).multiply(1 - COLLISION_LOSS));
     }
 
     private Vector CalculateCollisionAngle(Ball ballA, Ball ballB) {
