@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import Utility.CollisionData;
+import Utility.Vector;
 
 public class PhysicsEngine {
     private static final float COLLISION_LOSS = 0.25f;
@@ -51,24 +52,31 @@ public class PhysicsEngine {
         Ball movingBall;
         Ball stationaryBall;
 
-        if(ballA.GetVelocity() > ballB.GetVelocity()){
+        if(ballA.GetVelocity().x > ballB.GetVelocity().x){
             movingBall = ballA;
             stationaryBall = ballB;
         } else {
             movingBall = ballB;
             stationaryBall = ballA;
         }
+        System.out.println(CalculateCollisionAngle(ballA, ballB));
 
         movingBall.OnCollision(stationaryBall, collisionData.GetPointOfContact());
         stationaryBall.OnCollision(movingBall, collisionData.GetPointOfContact());
 
-        movingBall.SetVelocity(movingBall.GetVelocity() * (1 - COLLISION_LOSS));
-        float stationaryBallVelocityFinal = (2 * movingBall.GetMass() * movingBall.GetVelocity() + stationaryBall.GetMass() * stationaryBall.GetVelocity()) / (movingBall.GetMass() + stationaryBall.GetMass());
-        float movingBallVelocityFinal = movingBall.GetVelocity() * (movingBall.GetMass() - stationaryBall.GetMass()) / (movingBall.GetMass() + stationaryBall.GetMass());
+        movingBall.SetVelocity(movingBall.GetVelocity().x * (1 - COLLISION_LOSS));
+        float stationaryBallVelocityFinal = (2 * movingBall.GetMass() * movingBall.GetVelocity().x + stationaryBall.GetMass() * stationaryBall.GetVelocity().x) / (movingBall.GetMass() + stationaryBall.GetMass());
+        float movingBallVelocityFinal = movingBall.GetVelocity().x * (movingBall.GetMass() - stationaryBall.GetMass()) / (movingBall.GetMass() + stationaryBall.GetMass());
 
-        stationaryBall.SetVelocity(stationaryBallVelocityFinal);
-        stationaryBall.SetVelocityDirection(movingBall.GetVelocityDirection());
+        stationaryBall.SetVelocity(movingBall.GetVelocity().normalize().multiply(stationaryBallVelocityFinal));
         movingBall.SetVelocity(movingBallVelocityFinal);
+    }
+
+    private Vector CalculateCollisionAngle(Ball ballA, Ball ballB) {
+        return new Vector(
+                ballB.GetPosition().x - ballA.GetPosition().x,
+                ballB.GetPosition().y - ballA.GetPosition().y
+        ).multiply(1 / ballA.GetPosition().distance(ballB.GetPosition()));
     }
 
     public ArrayList<ICollider> GetColliders() {

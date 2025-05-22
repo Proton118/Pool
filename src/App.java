@@ -19,9 +19,9 @@ public class App extends PApplet {
     }
 
     public void setup() {
-        physicsEngine.AddCollider(new Ball(55, new Vector(width / 2 + 200, height / 2), 5, 3f)).
+        physicsEngine.AddCollider(new Ball(55, new Vector(width / 2 + 200, height / 2 - 200), 5, 0)).
         AddCollider(new Wall(new Vector(width / 2, height / 2 + 300), 1000, 10)).
-        AddCollider(new Ball(Color.BLACK, 8, 50, new Vector(width / 2 + 40, height / 2), 5, 3).SetVelocity(new Vector(150, 0)));
+        AddCollider(new Ball(Color.BLACK, 8, 50, new Vector(width / 2 + 40, height / 2), 5, 0f).SetVelocity(new Vector(150, -120)));
 
         previousTime = System.currentTimeMillis();
     }

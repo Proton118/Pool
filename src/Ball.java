@@ -4,8 +4,7 @@ import Utility.Vector;
 public class Ball implements ICollider {
     private float radius;
     private Vector position;
-    private float velocity;
-    private Vector velocityDirection;
+    private Vector velocity;
     private float acceleration;
     private float frictionConstant;
     private float mass;
@@ -16,8 +15,7 @@ public class Ball implements ICollider {
         this.radius = radius;
         this.position = position;
         this.mass = mass;
-        this.velocity = 0;
-        this.velocityDirection = new Vector(0, 0);
+        this.velocity = new Vector(0, 0);
         this.acceleration = 0;
         this.frictionConstant = frictionConstant;
         this.color = color;
@@ -27,8 +25,7 @@ public class Ball implements ICollider {
         this.radius = radius;
         this.position = position;
         this.mass = mass;
-        this.velocity = 0;
-        this.velocityDirection = new Vector(0, 0);
+        this.velocity = new Vector(0, 0);
         this.acceleration = 0;
         this.frictionConstant = frictionConstant;
         this.color = Color.WHITE;
@@ -45,12 +42,9 @@ public class Ball implements ICollider {
         acceleration = 0;
         acceleration += GetFriction(deltaTime) / mass;
 
-        velocity += acceleration * deltaTime;
-        if (velocity < 0) {
-            velocity = 0;
-        }
+        velocity = velocity.add(velocity.multiply(acceleration * deltaTime));
 
-        position = position.add(velocityDirection.multiply(velocity * deltaTime));
+        position = position.add(velocity.multiply(deltaTime));
     }
 
     /**
@@ -93,11 +87,11 @@ public class Ball implements ICollider {
      */
     public void Bounce(Vector pointOfContact) {
         Vector reflectionVector = position.subtract(pointOfContact).normalize();
-        Vector projectionVector = reflectionVector.multiply((velocityDirection.dot(reflectionVector))
+        Vector projectionVector = reflectionVector.multiply((velocity.dot(reflectionVector))
                 /
                 (reflectionVector.dot(reflectionVector)));
-        Vector newVelocityDirection = projectionVector.multiply(2).subtract(velocityDirection).multiply(-1);
-        velocityDirection = newVelocityDirection;
+        Vector newVelocityDirection = projectionVector.multiply(2).subtract(velocity).multiply(-1);
+        velocity = newVelocityDirection;
     }
 
     /**
@@ -107,25 +101,14 @@ public class Ball implements ICollider {
      * @return The current instance of the ball
      */
     public ICollider SetVelocity(Vector velocity) {
-        this.velocity = velocity.magnitude();
-        this.velocityDirection = velocity.normalize();
+        this.velocity = velocity;
         return this;
     }
     public ICollider SetVelocity(float velocity) {
-        this.velocity = velocity;
-        if(velocity < 0){
-            this.velocity = -velocity;
-            this.velocityDirection = velocityDirection.multiply(-1);
-        }
+        this.velocity = this.velocity.normalize().multiply(velocity);
         return this;
     }
-    public void SetVelocityDirection(Vector velocityDirection) {
-        this.velocityDirection = velocityDirection;
-    }
-    public Vector GetVelocityDirection() {
-        return velocityDirection;
-    }
-    public float GetVelocity() {
+    public Vector GetVelocity() {
         return velocity;
     }
 
