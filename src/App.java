@@ -19,8 +19,9 @@ public class App extends PApplet {
     }
 
     public void setup() {
-        physicsEngine.AddCollider(new Ball(55, new Vector(width / 2 + 200, height / 2), 5, 0.08f).SetVelocity(new Vector(-10, 0))).
-        AddCollider(new Ball(Color.BLACK, 8, 50, new Vector(width / 2 - 40, height / 2), 5, 0.08f).SetVelocity(new Vector(80, 0))).
+        float PPI = PoolTable.PIXELS_PER_INCH;
+        physicsEngine.AddCollider(new Ball(2.25f, new Vector((width / 2 + 200) / PPI, height / 2 / PPI), 5, 0.08f).SetVelocity(new Vector(-2, 0))).
+        AddCollider(new Ball(Color.BLACK, 8, 2.25f, new Vector((width / 2 - 40) / PPI, height / 2 / PPI), 5, 0.08f).SetVelocity(new Vector(20, 0))).
         AddColliders(new PoolTable(width, height).GetWalls());
 
         previousTime = System.currentTimeMillis();
@@ -55,15 +56,17 @@ public class App extends PApplet {
     }
 
     public void DrawBall(Ball ball) {
+        float PPI = PoolTable.PIXELS_PER_INCH;
+        System.out.println(PPI);
         fill(ball.GetColor().r, ball.GetColor().g, ball.GetColor().b);
-        circle(ball.GetPosition().x, ball.GetPosition().y, ball.GetRadius() * 2);
+        circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, ball.GetRadius() * 2 * PPI);
         if(ball.GetBallNumber() != -1){
             fill(255);
-            circle(ball.GetPosition().x, ball.GetPosition().y, ball.GetRadius() * 9.5f/10);
+            circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, ball.GetRadius() * (9.5f/10) * PPI);
             fill(0);
-            textSize(40);
+            textSize(2);
             textAlign(CENTER, CENTER);
-            text(ball.GetBallNumber(), ball.GetPosition().x, ball.GetPosition().y - 6f);
+            text(ball.GetBallNumber(), ball.GetPosition().x * PPI, (ball.GetPosition().y - 6f) * PPI);
         }
     }
 

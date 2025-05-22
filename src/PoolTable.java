@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import Utility.Vector;
 
 public class PoolTable {
-    public static final float PIXELS_PER_INCH = 100;
+    public static final float PIXELS_PER_INCH = 1125 / 78;
     private ArrayList<ICollider> walls;   
 
 
