@@ -16,6 +16,10 @@ public class PhysicsEngine {
         colliders.add(collider);
         return this;
     }
+    public PhysicsEngine AddColliders(ArrayList<ICollider> colliders) {
+        this.colliders.addAll(colliders);
+        return this;
+    }
 
     public void UpdateColliderPositions(float deltaTime) {
         for (ICollider collider : colliders) {
