@@ -40,16 +40,42 @@ public class PhysicsEngine {
     private void CheckCollision(ICollider a, ICollider b){
         if(a instanceof Ball ballA && b instanceof Ball ballB){
             CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
+            if(ballA.GetPreviousCollisionNumber() == ballB.GetBallNumber()) { return; }
             if(collisionData.GetCollided()){
                 HandleBallCollision(ballA, ballB, collisionData);
+                ballA.SetPreviousCollisionNumber(ballB.GetBallNumber());
+                ballB.SetPreviousCollisionNumber(ballA.GetBallNumber());
             }
         }
 
-        // if(a instanceof Wall wall && b instanceof Ball ball){
-        // }
+        if(a instanceof Wall wall && b instanceof Ball ball){
+            CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
+            if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) { return; }
+            if(collisionData.GetCollided()){
+                HandleWallCollision(ball, collisionData);
+                ball.SetPreviousCollisionNumber(wall.GetWallNumber());
+            }
+        }
 
-        // if(a instanceof Ball ball && b instanceof Wall wall){
-        // }
+        if(a instanceof Ball ball && b instanceof Wall wall){
+            CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
+            if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) { return; }
+            if(collisionData.GetCollided()){
+                HandleWallCollision(ball, collisionData);
+                ball.SetPreviousCollisionNumber(wall.GetWallNumber());
+            }
+        }
+    }
+
+    public void HandleWallCollision(Ball ball, CollisionData collisionData) {
+        ball.MoveToSurface(collisionData.GetPointOfContact());
+
+        Vector reflectionVector = ball.GetPosition().subtract(collisionData.GetPointOfContact()).normalize();
+        Vector projectionVector = reflectionVector.multiply((ball.GetVelocity().dot(reflectionVector))
+                /
+                (reflectionVector.dot(reflectionVector)));
+        Vector newVelocityDirection = projectionVector.multiply(2).subtract(ball.GetVelocity()).multiply(-1);
+        ball.SetVelocity(newVelocityDirection.multiply(1 - COLLISION_LOSS));
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {

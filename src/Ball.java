@@ -2,32 +2,32 @@ import Utility.Color;
 import Utility.Vector;
 
 public class Ball implements ICollider {
+    private static final float FRICTION_CONSTANT = 0.085f;
+
     private float radius;
     private Vector position;
     private Vector velocity;
     private float acceleration;
-    private float frictionConstant;
     private float mass;
     private Color color;
     private int ballNumber;
+    private int previousCollisionNumber = 0;
 
-    public Ball(Color color, int ballNumber, float radius, Vector position, float mass, float frictionConstant) {
+    public Ball(Color color, int ballNumber, float radius, Vector position, float mass) {
         this.radius = radius;
         this.position = position;
         this.mass = mass;
         this.velocity = new Vector(0, 0);
         this.acceleration = 0;
-        this.frictionConstant = frictionConstant;
         this.color = color;
         this.ballNumber = ballNumber;
     }
-    public Ball(float radius, Vector position, float mass, float frictionConstant) {
+    public Ball(float radius, Vector position, float mass) {
         this.radius = radius;
         this.position = position;
         this.mass = mass;
         this.velocity = new Vector(0, 0);
         this.acceleration = 0;
-        this.frictionConstant = frictionConstant;
         this.color = Color.WHITE;
         this.ballNumber = -1;
     }
@@ -54,7 +54,7 @@ public class Ball implements ICollider {
      * @return The friction force
      */
     public float GetFriction(float deltaTime) {
-        return frictionConstant * mass * -9.81f;
+        return FRICTION_CONSTANT * mass * -9.81f;
     }
 
     /**
@@ -77,21 +77,6 @@ public class Ball implements ICollider {
     public void MoveToSurface(Vector pointOfContact) {
         Vector direction = position.subtract(pointOfContact).normalize();
         position = pointOfContact.add(direction.multiply(radius));
-    }
-
-    /**
-     * Bounce the ball off the collider it is colliding with
-     * 
-     * @param other          The other collider to bounce off of
-     * @param pointOfContact The point of contact between the two colliders
-     */
-    public void Bounce(Vector pointOfContact) {
-        Vector reflectionVector = position.subtract(pointOfContact).normalize();
-        Vector projectionVector = reflectionVector.multiply((velocity.dot(reflectionVector))
-                /
-                (reflectionVector.dot(reflectionVector)));
-        Vector newVelocityDirection = projectionVector.multiply(2).subtract(velocity).multiply(-1);
-        velocity = newVelocityDirection;
     }
 
     /**
@@ -149,5 +134,12 @@ public class Ball implements ICollider {
 
     public float GetMass() {
         return mass;
+    }
+
+    public void SetPreviousCollisionNumber(int previousCollisionNumber) {
+        this.previousCollisionNumber = previousCollisionNumber;
+    }
+    public int GetPreviousCollisionNumber() {
+        return previousCollisionNumber;
     }
 }

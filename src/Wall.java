@@ -4,11 +4,13 @@ public class Wall implements ICollider{
     private Vector position;
     private float width;
     private float height;
+    private int wallNumber;
 
-    public Wall(Vector position, float width, float height) {
+    public Wall(Vector position, float width, float height, int wallNumber) {
         this.position = position;
         this.width = width;
         this.height = height;
+        this.wallNumber = wallNumber;
     }
 
     public Vector GetPosition() {
@@ -19,5 +21,8 @@ public class Wall implements ICollider{
     }
     public float GetHeight() {
         return height;
+    }
+    public int GetWallNumber() {
+        return wallNumber;
     }
 }
