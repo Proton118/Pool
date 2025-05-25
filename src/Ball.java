@@ -2,7 +2,8 @@ import Utility.Color;
 import Utility.Vector;
 
 public class Ball implements ICollider {
-    private static final float FRICTION_CONSTANT = 0.085f;
+    private static final float FRICTION_CONSTANT = 0.2f;
+    private static final float GRAVITY = 386;
 
     private float radius;
     private Vector position;
@@ -40,9 +41,14 @@ public class Ball implements ICollider {
     @Override
     public void Update(float deltaTime) {
         acceleration = 0;
-        acceleration += GetFriction(deltaTime) / mass;
+        acceleration += GetFriction() / mass;
 
-        velocity = velocity.add(velocity.multiply(acceleration * deltaTime));
+        Vector originalDirection = velocity.normalize();
+        velocity = velocity.add(velocity.normalize().multiply(acceleration * deltaTime));
+        Vector newDirection = velocity.normalize();
+        if(!originalDirection.directionOf(newDirection)){
+            velocity = new Vector(0, 0);
+        }
 
         position = position.add(velocity.multiply(deltaTime));
     }
@@ -50,11 +56,10 @@ public class Ball implements ICollider {
     /**
      * Get the friction force acting on the ball
      * 
-     * @param deltaTime The time since the last update
      * @return The friction force
      */
-    public float GetFriction(float deltaTime) {
-        return FRICTION_CONSTANT * mass * -9.81f;
+    public float GetFriction() {
+        return FRICTION_CONSTANT * mass * -GRAVITY;
     }
 
     /**

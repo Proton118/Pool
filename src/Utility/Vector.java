@@ -43,6 +43,9 @@ public class Vector {
         float scalar = this.dot(other) / other.dot(other);
         return other.multiply(scalar);
     }
+    public boolean directionOf(Vector other) {
+        return Math.signum(x) == Math.signum(other.x) && Math.signum(y) == Math.signum(other.y);
+    }
 
     @Override
     public String toString() {
