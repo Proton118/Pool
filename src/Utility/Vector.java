@@ -39,6 +39,10 @@ public class Vector {
     public float distance(Vector other) {
         return (float) Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
     }
+    public Vector projectOnto(Vector other) {
+        float scalar = this.dot(other) / other.dot(other);
+        return other.multiply(scalar);
+    }
 
     @Override
     public String toString() {
