@@ -53,6 +53,7 @@ public class PoolCue {
         } else {
             if (isActive) {
                 isActive = false;
+                startPosition = new Vector(-100, -100);
                 return cueMagnitude > 0 ? startCueDirection.multiply(-cueMagnitude / MAX_CUE_LENGTH * MAX_CUE_SPEED) : null;
             }
 

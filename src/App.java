@@ -5,6 +5,8 @@ import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {
+    private static final float TIME_SCALE = 1/2f;
+
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
     private PoolCue cue;
@@ -43,7 +45,7 @@ public class App extends PApplet {
         int tableHeight = 700;
         image(table.GetTableImage(), width / 2 - tableWidth / 2, height / 2 - tableHeight / 2, tableWidth, tableHeight);
 
-        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f;
+        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
         previousTime = System.currentTimeMillis();
 
         physicsEngine.UpdateColliderPositions(deltaTime);
