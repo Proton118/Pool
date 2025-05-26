@@ -9,8 +9,10 @@ public class App extends PApplet {
 
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
-    private PoolCue cue;
 
+
+    private PoolCue cue;
+    private Ball cueBall;
     private PoolTable table;
 
     public static void main(String[] args) {
@@ -26,7 +28,9 @@ public class App extends PApplet {
     public void setup() {
         table = new PoolTable(width, height, this);
         float PPI = PoolTable.PIXELS_PER_INCH;
-        physicsEngine.AddCollider(new Ball(2.25f, new Vector((width / 2 + 200) / PPI, height / 2 / PPI), 0.17f))
+        cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
+
+        physicsEngine.AddCollider(cueBall)
                 .AddCollider(new Ball(Color.BLACK, 8, 2.25f, new Vector((width / 2) / PPI, height / 2 / PPI), 0.17f))
                 .AddCollider(
                         new Ball(Color.BLUE, 5, 2.25f, new Vector((width / 2 + 50) / PPI, height / 2 / PPI), 0.17f))
@@ -52,9 +56,8 @@ public class App extends PApplet {
         physicsEngine.HandleCollisions();
         DrawColliders();
         if (AreAllBallsAtRest()) {
-            Vector fireVector = cue.UpdateCue((Ball) physicsEngine.GetColliders().get(0));
+            Vector fireVector = cue.UpdateCue(cueBall);
             if (fireVector != null) {
-                Ball cueBall = (Ball) physicsEngine.GetColliders().get(0);
                 cueBall.SetPreviousCollisionNumber(0);
                 cueBall.SetVelocity(fireVector);
             }
