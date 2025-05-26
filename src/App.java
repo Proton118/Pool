@@ -100,7 +100,6 @@ public class App extends PApplet {
             if (collider instanceof Ball) {
                 Ball ball = (Ball) collider;
                 if(ball.GetVelocity().magnitude() > 0.01f) {
-                    System.out.println("Ball " + ball.GetBallNumber() + " is moving with velocity: " + ball.GetVelocity());
                     return false;
                 }
             }

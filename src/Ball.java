@@ -4,6 +4,7 @@ import Utility.Vector;
 public class Ball implements ICollider {
     private static final float FRICTION_CONSTANT = 0.2f;
     private static final float GRAVITY = 386;
+    private static final float SURFACE_TOLERANCE = 0.01f;
 
     private float radius;
     private Vector position;
@@ -80,8 +81,9 @@ public class Ball implements ICollider {
      * @param pointOfContact The point of contact between the two colliders
      */
     public void MoveToSurface(Vector pointOfContact) {
+        System.out.println("Surface");
         Vector direction = position.subtract(pointOfContact).normalize();
-        position = pointOfContact.add(direction.multiply(radius));
+        position = pointOfContact.add(direction.multiply(radius + SURFACE_TOLERANCE));
     }
 
     /**

@@ -40,8 +40,13 @@ public class PhysicsEngine {
     private void CheckCollision(ICollider a, ICollider b){
         if(a instanceof Ball ballA && b instanceof Ball ballB){
             CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
-            if(ballA.GetPreviousCollisionNumber() == ballB.GetBallNumber()) { return; }
             if(collisionData.GetCollided()){
+
+                // if(ballA.GetPreviousCollisionNumber() == ballB.GetBallNumber()) {
+                //     ballA.MoveToSurface(collisionData.GetPointOfContact());
+                //     ballB.MoveToSurface(collisionData.GetPointOfContact());
+                //     return;
+                // }
                 HandleBallCollision(ballA, ballB, collisionData);
                 ballA.SetPreviousCollisionNumber(ballB.GetBallNumber());
                 ballB.SetPreviousCollisionNumber(ballA.GetBallNumber());
@@ -50,19 +55,25 @@ public class PhysicsEngine {
 
         if(a instanceof Wall wall && b instanceof Ball ball){
             CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
-            if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) { return; }
             if(collisionData.GetCollided()){
+                // if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) {
+                //     ball.MoveToSurface(collisionData.GetPointOfContact());
+                //     return;
+                // }
                 HandleWallCollision(ball, collisionData);
-                ball.SetPreviousCollisionNumber(wall.GetWallNumber());
+                ClearCollisionNumbers();
             }
         }
 
         if(a instanceof Ball ball && b instanceof Wall wall){
             CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
-            if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) { return; }
             if(collisionData.GetCollided()){
+                // if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) {
+                //     ball.MoveToSurface(collisionData.GetPointOfContact());
+                //     return;
+                // }
                 HandleWallCollision(ball, collisionData);
-                ball.SetPreviousCollisionNumber(wall.GetWallNumber());
+                ClearCollisionNumbers();
             }
         }
     }
@@ -79,6 +90,9 @@ public class PhysicsEngine {
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
+        ballA.MoveToSurface(collisionData.GetPointOfContact());
+        ballB.MoveToSurface(collisionData.GetPointOfContact());
+
         Vector collisionAngle = CalculateCollisionAngle(ballA, ballB);
 
         Vector velocityA = ballA.GetVelocity();
@@ -116,5 +130,12 @@ public class PhysicsEngine {
 
     public ArrayList<ICollider> GetColliders() {
         return colliders;
+    }
+    public void ClearCollisionNumbers() {
+        for (ICollider collider : colliders) {
+            if (collider instanceof Ball ball) {
+                ball.SetPreviousCollisionNumber(0);
+            }
+        }
     }
 }
