@@ -7,9 +7,11 @@ public class PhysicsEngine {
     private static final float COLLISION_LOSS = 0.15f;
 
     private ArrayList<ICollider> colliders;
+    private ArrayList<TablePocket> pockets;
 
     public PhysicsEngine() {
-        this.colliders = new ArrayList<>();   
+        colliders = new ArrayList<>();   
+        pockets = new ArrayList<>();
     }
     
     public PhysicsEngine AddCollider(ICollider collider) {
@@ -18,6 +20,10 @@ public class PhysicsEngine {
     }
     public PhysicsEngine AddColliders(ArrayList<ICollider> colliders) {
         this.colliders.addAll(colliders);
+        return this;
+    }
+    public PhysicsEngine AddPockets(ArrayList<TablePocket> pockets) {
+        this.pockets.addAll(pockets);
         return this;
     }
 
@@ -77,6 +83,34 @@ public class PhysicsEngine {
             }
         }
     }
+    public void CheckPockets(){ //TODO: make sure a ball cannot miss the pocket
+        ArrayList<Ball> ballsToRemove = new ArrayList<>();
+        for (TablePocket pocket : pockets) {
+            for (ICollider collider : colliders) {
+                if (collider instanceof Ball ball) {
+                    if (pocket.GetPosition().distance(ball.GetPosition()) <= pocket.GetRadius()) {
+                        ballsToRemove.add(ball);
+                    }
+                }
+            }
+        }
+        colliders.removeAll(ballsToRemove);
+    }
+
+    public boolean IsBallInArea(Vector position, float radius) {
+        for (ICollider collider : colliders) {
+            if (collider instanceof Ball ball) {
+                if (ball.GetPosition().distance(position) <= radius + ball.GetRadius()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean IsBallInPocket(Ball ball) {
+        return colliders.contains(ball);
+    }
 
     public void HandleWallCollision(Ball ball, CollisionData collisionData) {
         ball.MoveToSurface(collisionData.GetPointOfContact());
@@ -89,7 +123,7 @@ public class PhysicsEngine {
         ball.SetVelocity(newVelocityDirection.multiply(1 - COLLISION_LOSS));
     }
 
-    public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
+    public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) { //TODO: Balls getting stuck in each other
         ballA.MoveToSurface(collisionData.GetPointOfContact());
         ballB.MoveToSurface(collisionData.GetPointOfContact());
 
@@ -130,6 +164,9 @@ public class PhysicsEngine {
 
     public ArrayList<ICollider> GetColliders() {
         return colliders;
+    }
+    public ArrayList<TablePocket> GetPockets() {
+        return pockets;
     }
     public void ClearCollisionNumbers() {
         for (ICollider collider : colliders) {

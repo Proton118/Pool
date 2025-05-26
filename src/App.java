@@ -1,15 +1,13 @@
 import java.util.ArrayList;
 
-import Utility.Color;
 import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {
-    private static final float TIME_SCALE = 1/2f;
+    private static final float TIME_SCALE = 1 / 2f;
 
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
-
 
     private PoolCue cue;
     private Ball cueBall;
@@ -33,9 +31,9 @@ public class App extends PApplet {
         ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
 
         physicsEngine.AddCollider(cueBall)
-        .AddColliders(ballSetup.GetBalls())
-        .AddColliders(table.GetWalls());
-                
+                .AddColliders(ballSetup.GetBalls())
+                .AddColliders(table.GetWalls())
+                .AddPockets(table.GetPockets());
 
         cue = new PoolCue(this);
 
@@ -53,13 +51,10 @@ public class App extends PApplet {
 
         physicsEngine.UpdateColliderPositions(deltaTime);
         physicsEngine.HandleCollisions();
+        physicsEngine.CheckPockets();
         DrawColliders();
         if (AreAllBallsAtRest()) {
-            Vector fireVector = cue.UpdateCue(cueBall);
-            if (fireVector != null) {
-                cueBall.SetPreviousCollisionNumber(0);
-                cueBall.SetVelocity(fireVector);
-            }
+            UpdateCueBall();
         }
     }
 
@@ -77,9 +72,15 @@ public class App extends PApplet {
                 // rect(wall.GetPosition().x * PPI - wall.GetWidth() / 2 * PPI,
                 // wall.GetPosition().y * PPI - wall.GetHeight() / 2 * PPI,
                 // wall.GetWidth() * PPI, wall.GetHeight() * PPI);
-            } else if (collider instanceof TablePocket) {
-
             }
+        }
+        float PPI = PoolTable.PIXELS_PER_INCH;
+        for(TablePocket pocket : physicsEngine.GetPockets()) {
+        fill(255);
+        circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
+        pocket.GetRadius() * 2 * PPI);
+        circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
+        pocket.GetRadius() * 2 * PPI);
         }
     }
 
@@ -101,12 +102,50 @@ public class App extends PApplet {
         for (ICollider collider : physicsEngine.GetColliders()) {
             if (collider instanceof Ball) {
                 Ball ball = (Ball) collider;
-                if(ball.GetVelocity().magnitude() > 0.01f) {
+                if (ball.GetVelocity().magnitude() > 0.01f) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public void UpdateCueBall() {
+        if(!physicsEngine.IsBallInPocket(cueBall)) {
+            PlaceBall();
+            return;
+        }
+
+        Vector fireVector = cue.UpdateCue(cueBall);
+        if (fireVector != null) {
+            cueBall.SetPreviousCollisionNumber(0);
+            cueBall.SetVelocity(fireVector);
+        }
+    }
+
+    public void PlaceBall(){
+        float PPI = PoolTable.PIXELS_PER_INCH;
+
+        boolean cueBallCollidingWithOtherBall = physicsEngine.IsBallInArea(new Vector(mouseX / PPI, mouseY / PPI), cueBall.GetRadius());
+        boolean cueBallOutOfBounds = mouseX + cueBall.GetRadius() * PPI > width / 2 + PoolTable.TABLE_WIDTH * PPI / 2 ||
+                mouseX - cueBall.GetRadius() * PPI < width / 2 - PoolTable.TABLE_WIDTH * PPI / 2 ||
+                mouseY + cueBall.GetRadius() * PPI > height / 2 + PoolTable.TABLE_HEIGHT * PPI / 2 ||
+                mouseY - cueBall.GetRadius() * PPI < height / 2 - PoolTable.TABLE_HEIGHT * PPI / 2;
+
+        if(cueBallCollidingWithOtherBall || cueBallOutOfBounds) {
+            fill(255, 100, 100, 150);
+            circle(mouseX, mouseY, cueBall.GetRadius() * 2 * PPI);
+            return;
+        }
+
+        if(mousePressed) {
+            cueBall.SetPosition(new Vector(mouseX / PPI, mouseY / PPI));
+            cueBall.SetVelocity(new Vector(0, 0));
+            cueBall.SetPreviousCollisionNumber(0);
+            physicsEngine.AddCollider(cueBall);
+        }
+        fill(255, 255, 255, 150);
+        circle(mouseX, mouseY, PPI * cueBall.GetRadius() * 2);
     }
 
 }

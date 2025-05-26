@@ -85,6 +85,10 @@ public class Ball implements ICollider {
         position = pointOfContact.add(direction.multiply(radius + SURFACE_TOLERANCE));
     }
 
+    public void SetPosition(Vector position) {
+        this.position = position;
+    }
+
     /**
      * Set the velocity of the ball
      * 
