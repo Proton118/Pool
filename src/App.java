@@ -13,6 +13,7 @@ public class App extends PApplet {
 
     private PoolCue cue;
     private Ball cueBall;
+    private BallSetup ballSetup;
     private PoolTable table;
 
     public static void main(String[] args) {
@@ -29,14 +30,12 @@ public class App extends PApplet {
         table = new PoolTable(width, height, this);
         float PPI = PoolTable.PIXELS_PER_INCH;
         cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
+        ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
 
         physicsEngine.AddCollider(cueBall)
-                .AddCollider(new Ball(Color.BLACK, 8, 2.25f, new Vector((width / 2) / PPI, height / 2 / PPI), 0.17f))
-                .AddCollider(
-                        new Ball(Color.BLUE, 5, 2.25f, new Vector((width / 2 + 50) / PPI, height / 2 / PPI), 0.17f))
-                .AddCollider(
-                        new Ball(Color.GREEN, 3, 2.25f, new Vector((width / 2 - 50) / PPI, height / 2 / PPI), 0.17f))
-                .AddColliders(table.GetWalls());
+        .AddColliders(ballSetup.GetBalls())
+        .AddColliders(table.GetWalls());
+                
 
         cue = new PoolCue(this);
 
