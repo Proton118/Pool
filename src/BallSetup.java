@@ -7,10 +7,13 @@ public class BallSetup {
     private static final float BALL_RADIUS = 2.25f;
     private static final float BALL_MASS = 0.17f;
     private static final float MIN_OFFSET = 0.25f;
+    private static final Color C1 = new Color(230, 230, 20);
+    private static final Color C2 = new Color(230, 20, 20);
 
     private ArrayList<ICollider> balls;
 
     private int[] numberOrder = {1, 11, 5, 2, 8, 10, 9, 7, 14, 4, 6, 15, 13, 3, 12};
+    private Color[] colorOrder = {C1, C2, C1, C1, Color.BLACK, C2, C2, C1, C2, C1, C1, C2, C2, C1, C2};
     
     public BallSetup(Vector position) {
         balls = new ArrayList<>();
@@ -21,7 +24,7 @@ public class BallSetup {
                 float xOffset = (i * BALL_RADIUS * 2 + MIN_OFFSET);
                 float yOffset = -i*BALL_RADIUS + j * BALL_RADIUS * 2 + MIN_OFFSET;
                 Vector ballPosition = new Vector(position.x - xOffset, position.y + yOffset);
-                balls.add(new Ball(Color.BLACK, numberOrder[currentNumber],BALL_RADIUS, ballPosition, BALL_MASS));
+                balls.add(new Ball(colorOrder[currentNumber], numberOrder[currentNumber],BALL_RADIUS, ballPosition, BALL_MASS));
                 currentNumber++;
             }
         }

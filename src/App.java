@@ -74,14 +74,14 @@ public class App extends PApplet {
                 // wall.GetWidth() * PPI, wall.GetHeight() * PPI);
             }
         }
-        float PPI = PoolTable.PIXELS_PER_INCH;
-        for(TablePocket pocket : physicsEngine.GetPockets()) {
-        fill(255);
-        circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
-        pocket.GetRadius() * 2 * PPI);
-        circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
-        pocket.GetRadius() * 2 * PPI);
-        }
+        // float PPI = PoolTable.PIXELS_PER_INCH;
+        // for(TablePocket pocket : physicsEngine.GetPockets()) {
+        // fill(255);
+        // circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
+        // pocket.GetRadius() * 2 * PPI);
+        // circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
+        // pocket.GetRadius() * 2 * PPI);
+        // }
     }
 
     public void DrawBall(Ball ball) {

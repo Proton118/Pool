@@ -23,9 +23,9 @@ public class PoolTable {
         walls.add(new Wall(new Vector((width / 2 - 306) / PPI, (height / 2 - 300 - 233) / PPI), 539 / PPI, 500 / PPI, -4));
         walls.add(new Wall(new Vector((width / 2 + 306) / PPI, (height / 2 - 300 - 233) / PPI), 539 / PPI, 500 / PPI, -5));
 
-        walls.add(new Wall(new Vector((width / 2 + 600 + 276) / PPI, height / 2 / PPI), 500 / PPI, 475 / PPI, -6));
+        walls.add(new Wall(new Vector((width / 2 + 600 + 276) / PPI, height / 2 / PPI), 500 / PPI, 480 / PPI, -6));
 
-        walls.add(new Wall(new Vector((width / 2 - 600 - 275) / PPI, height / 2 / PPI), 500 / PPI, 475 / PPI, -7));
+        walls.add(new Wall(new Vector((width / 2 - 600 - 275) / PPI, height / 2 / PPI), 500 / PPI, 480 / PPI, -7));
 
         pockets = new ArrayList<>();
         pockets.add(new TablePocket(new Vector((width / 2) / PPI, (height / 2 - 315) / PPI), 30 / PPI));

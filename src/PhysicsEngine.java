@@ -112,7 +112,7 @@ public class PhysicsEngine {
         return colliders.contains(ball);
     }
 
-    public void HandleWallCollision(Ball ball, CollisionData collisionData) {
+    public void HandleWallCollision(Ball ball, CollisionData collisionData) { //TODO: BALLS GETTING STUCK IN WALLS
         ball.MoveToSurface(collisionData.GetPointOfContact());
 
         Vector reflectionVector = ball.GetPosition().subtract(collisionData.GetPointOfContact()).normalize();
