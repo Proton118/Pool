@@ -40,13 +40,15 @@ public final class CollisionCalculator {
             int contactDirection = ball.GetPosition().y > wall.GetPosition().y ? 1 : -1;
             Vector pointOfContact = new Vector(ball.GetPosition().x,
                     wall.GetPosition().y + wall.GetHeight() / 2 * contactDirection);
-            return new CollisionData(true, pointOfContact);
+            Vector wallNormal = new Vector(0, -contactDirection); // Perpendicular to the direction vector
+            return new CollisionData(true, pointOfContact, wallNormal);
         }
         if (circleDistance.y <= wall.GetHeight() / 2) {
             int contactDirection = ball.GetPosition().x > wall.GetPosition().x ? 1 : -1;
             Vector pointOfContact = new Vector(wall.GetPosition().x + wall.GetWidth() / 2 * contactDirection,
                     ball.GetPosition().y);
-            return new CollisionData(true, pointOfContact);
+            Vector wallNormal = new Vector(-contactDirection, 0); // Perpendicular to the direction vector
+            return new CollisionData(true, pointOfContact, wallNormal);
         }
 
         float cornerDist_sq = (circleDistance.x - wall.GetWidth() / 2)
@@ -59,7 +61,7 @@ public final class CollisionCalculator {
             pointOfContact.x *= wall.GetWidth() / 2;
             pointOfContact.y *= wall.GetHeight() / 2;
             pointOfContact = wall.GetPosition().add(pointOfContact);
-            return new CollisionData(true, pointOfContact);
+            return new CollisionData(true, pointOfContact, null);
         }
         return new CollisionData(false);
     }

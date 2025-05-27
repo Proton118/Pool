@@ -117,7 +117,12 @@ public class PhysicsEngine {
 
     public void HandleWallCollision(Ball ball, CollisionData collisionData) { // TODO: (Unlikely) BALLS GETTING STUCK IN
                                                                               // WALLS
-        ball.MoveToSurface(collisionData.GetPointOfContact());
+        if (collisionData.GetWallNormal() != null) {
+            ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().multiply(-0.01f)));
+            ball.MoveToSurfaceWall(collisionData.GetPointOfContact(), collisionData.GetWallNormal());
+        } else {
+            ball.MoveToSurface(collisionData.GetPointOfContact());
+        }
 
         Vector reflectionVector = ball.GetPosition().subtract(collisionData.GetPointOfContact()).normalize();
         Vector projectionVector = reflectionVector.multiply((ball.GetVelocity().dot(reflectionVector))
@@ -131,9 +136,9 @@ public class PhysicsEngine {
         ballA.MoveToSurface(collisionData.GetPointOfContact());
         ballB.MoveToSurface(collisionData.GetPointOfContact());
         if (ballA.GetPosition().equals(ballB.GetPosition(), 0.1f)) {
-            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().normalize().multiply(0.1f)));
-            ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().normalize().multiply(0.1f)));
-            return;
+            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-1)));
+            ballA.MoveToSurface(collisionData.GetPointOfContact());
+            ballB.MoveToSurface(collisionData.GetPointOfContact());
         }
 
         float momentumA = ballA.GetMass() * ballA.GetVelocity().magnitude();

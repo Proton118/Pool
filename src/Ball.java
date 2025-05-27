@@ -4,7 +4,7 @@ import Utility.Vector;
 public class Ball implements ICollider {
     private static final float FRICTION_CONSTANT = 0.15f;
     private static final float GRAVITY = 386;
-    private static final float SURFACE_TOLERANCE = 0.01f;
+    private static final float SURFACE_TOLERANCE = 0.05f;
 
     private float radius;
     private Vector position;
@@ -82,7 +82,13 @@ public class Ball implements ICollider {
      */
     public void MoveToSurface(Vector pointOfContact) {
         Vector direction = position.subtract(pointOfContact).normalize();
+        System.out.println("Position: " + position + ", Point of Contact: " + pointOfContact + ", Direction: " + direction);
         position = pointOfContact.add(direction.multiply(radius + SURFACE_TOLERANCE));
+    }
+
+    public void MoveToSurfaceWall(Vector pointOfContact, Vector wallNormal) {
+        Vector offset = wallNormal.multiply(-radius + SURFACE_TOLERANCE);
+        position = pointOfContact.add(offset);
     }
 
     public void SetPosition(Vector position) {
