@@ -54,6 +54,7 @@ public class App extends PApplet {
         physicsEngine.UpdateColliderPositions(deltaTime);
         physicsEngine.HandleCollisions();
         physicsEngine.CheckPockets();
+        physicsEngine.CheckOutOfBounds(new Vector(width, height));
         DrawColliders();
         if (AreAllBallsAtRest()) {
             UpdateCueBall();

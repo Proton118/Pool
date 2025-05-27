@@ -97,6 +97,26 @@ public class PhysicsEngine {
                 }
             }
         }
+
+        colliders.removeAll(ballsToRemove);
+    }
+
+    public void CheckOutOfBounds(Vector screenSize) {
+        ArrayList<Ball> ballsToRemove = new ArrayList<>();
+        float PPI = PoolTable.PIXELS_PER_INCH;
+        float buffer = 1;
+        screenSize = screenSize.multiply(1 / PPI);
+        for (ICollider collider : colliders) {
+            if (collider instanceof Ball ball) {
+                boolean outOfBounds = ball.GetPosition().x + ball.GetRadius() > screenSize.x / 2 + (PoolTable.TABLE_WIDTH + buffer) / 2 ||
+                        ball.GetPosition().x - ball.GetRadius() < screenSize.x / 2 - (PoolTable.TABLE_WIDTH + buffer)/ 2 ||
+                        ball.GetPosition().y + ball.GetRadius() > screenSize.y / 2 + (PoolTable.TABLE_HEIGHT + buffer) / 2 ||
+                        ball.GetPosition().y - ball.GetRadius() < screenSize.y / 2 - (PoolTable.TABLE_HEIGHT + buffer) / 2;
+                if (outOfBounds) {
+                    ballsToRemove.add(ball);
+                }
+            }
+        }
         colliders.removeAll(ballsToRemove);
     }
 
