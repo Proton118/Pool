@@ -2,8 +2,8 @@ import Utility.Vector;
 import processing.core.PApplet;
 
 public class PoolCue {
-    private static final float MAX_CUE_LENGTH = 200;
-    public static final float MAX_CUE_SPEED = 300;
+    private static final float MAX_CUE_LENGTH = 250;
+    public static final float MAX_CUE_SPEED = 350;
 
     private PApplet app;
     private Vector startPosition;
