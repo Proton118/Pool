@@ -14,6 +14,8 @@ public class App extends PApplet {
     private BallSetup ballSetup;
     private PoolTable table;
 
+    private boolean breakShot = true;
+
     public static void main(String[] args) {
         PApplet.main("App");
     }
@@ -111,34 +113,39 @@ public class App extends PApplet {
     }
 
     public void UpdateCueBall() {
-        if(!physicsEngine.IsBallInPocket(cueBall)) {
+        if (!physicsEngine.IsBallInPocket(cueBall)) {
             PlaceBall();
             return;
         }
-
-        Vector fireVector = cue.UpdateCue(cueBall);
+        Vector fireVector;
+        if (breakShot) {
+            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 1.5f);
+        } else {
+            fireVector = cue.UpdateCue(cueBall);
+        }
         if (fireVector != null) {
             cueBall.SetPreviousCollisionNumber(0);
             cueBall.SetVelocity(fireVector);
         }
     }
 
-    public void PlaceBall(){
+    public void PlaceBall() {
         float PPI = PoolTable.PIXELS_PER_INCH;
 
-        boolean cueBallCollidingWithOtherBall = physicsEngine.IsBallInArea(new Vector(mouseX / PPI, mouseY / PPI), cueBall.GetRadius());
+        boolean cueBallCollidingWithOtherBall = physicsEngine.IsBallInArea(new Vector(mouseX / PPI, mouseY / PPI),
+                cueBall.GetRadius());
         boolean cueBallOutOfBounds = mouseX + cueBall.GetRadius() * PPI > width / 2 + PoolTable.TABLE_WIDTH * PPI / 2 ||
                 mouseX - cueBall.GetRadius() * PPI < width / 2 - PoolTable.TABLE_WIDTH * PPI / 2 ||
                 mouseY + cueBall.GetRadius() * PPI > height / 2 + PoolTable.TABLE_HEIGHT * PPI / 2 ||
                 mouseY - cueBall.GetRadius() * PPI < height / 2 - PoolTable.TABLE_HEIGHT * PPI / 2;
 
-        if(cueBallCollidingWithOtherBall || cueBallOutOfBounds) {
+        if (cueBallCollidingWithOtherBall || cueBallOutOfBounds) {
             fill(255, 100, 100, 150);
             circle(mouseX, mouseY, cueBall.GetRadius() * 2 * PPI);
             return;
         }
 
-        if(mousePressed) {
+        if (mousePressed) {
             cueBall.SetPosition(new Vector(mouseX / PPI, mouseY / PPI));
             cueBall.SetVelocity(new Vector(0, 0));
             cueBall.SetPreviousCollisionNumber(0);

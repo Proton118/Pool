@@ -3,7 +3,7 @@ import processing.core.PApplet;
 
 public class PoolCue {
     private static final float MAX_CUE_LENGTH = 200;
-    private static final float MAX_CUE_SPEED = 300;
+    public static final float MAX_CUE_SPEED = 300;
 
     private PApplet app;
     private Vector startPosition;
@@ -15,7 +15,7 @@ public class PoolCue {
         startPosition = new Vector(0, 0);
     }
 
-    public Vector UpdateCue(Ball cueBall) {
+    public Vector UpdateCue(Ball cueBall, float maxSpeed) {
         // app.noCursor();
 
         float PPI = PoolTable.PIXELS_PER_INCH;
@@ -54,13 +54,16 @@ public class PoolCue {
             if (isActive) {
                 isActive = false;
                 startPosition = new Vector(-100, -100);
-                return cueMagnitude > 0 ? startCueDirection.multiply(-cueMagnitude / MAX_CUE_LENGTH * MAX_CUE_SPEED) : null;
+                return cueMagnitude > 0 ? startCueDirection.multiply(-cueMagnitude / MAX_CUE_LENGTH * maxSpeed) : null;
             }
 
             startPosition = cueBallPosition.add(cueDirection.multiply(10 + cueBall.GetRadius() * PPI));
         }
 
         return null;
+    }
+    public Vector UpdateCue(Ball cueBall) {
+        return UpdateCue(cueBall, MAX_CUE_SPEED);
     }
 
 }

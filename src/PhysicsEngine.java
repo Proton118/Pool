@@ -10,18 +10,20 @@ public class PhysicsEngine {
     private ArrayList<TablePocket> pockets;
 
     public PhysicsEngine() {
-        colliders = new ArrayList<>();   
+        colliders = new ArrayList<>();
         pockets = new ArrayList<>();
     }
-    
+
     public PhysicsEngine AddCollider(ICollider collider) {
         colliders.add(collider);
         return this;
     }
+
     public PhysicsEngine AddColliders(ArrayList<ICollider> colliders) {
         this.colliders.addAll(colliders);
         return this;
     }
+
     public PhysicsEngine AddPockets(ArrayList<TablePocket> pockets) {
         this.pockets.addAll(pockets);
         return this;
@@ -43,15 +45,15 @@ public class PhysicsEngine {
         }
     }
 
-    private void CheckCollision(ICollider a, ICollider b){
-        if(a instanceof Ball ballA && b instanceof Ball ballB){
+    private void CheckCollision(ICollider a, ICollider b) {
+        if (a instanceof Ball ballA && b instanceof Ball ballB) {
             CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
-            if(collisionData.GetCollided()){
+            if (collisionData.GetCollided()) {
 
                 // if(ballA.GetPreviousCollisionNumber() == ballB.GetBallNumber()) {
-                //     ballA.MoveToSurface(collisionData.GetPointOfContact());
-                //     ballB.MoveToSurface(collisionData.GetPointOfContact());
-                //     return;
+                // ballA.MoveToSurface(collisionData.GetPointOfContact());
+                // ballB.MoveToSurface(collisionData.GetPointOfContact());
+                // return;
                 // }
                 HandleBallCollision(ballA, ballB, collisionData);
                 ballA.SetPreviousCollisionNumber(ballB.GetBallNumber());
@@ -59,31 +61,32 @@ public class PhysicsEngine {
             }
         }
 
-        if(a instanceof Wall wall && b instanceof Ball ball){
+        if (a instanceof Wall wall && b instanceof Ball ball) {
             CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
-            if(collisionData.GetCollided()){
+            if (collisionData.GetCollided()) {
                 // if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) {
-                //     ball.MoveToSurface(collisionData.GetPointOfContact());
-                //     return;
+                // ball.MoveToSurface(collisionData.GetPointOfContact());
+                // return;
                 // }
                 HandleWallCollision(ball, collisionData);
                 ClearCollisionNumbers();
             }
         }
 
-        if(a instanceof Ball ball && b instanceof Wall wall){
+        if (a instanceof Ball ball && b instanceof Wall wall) {
             CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
-            if(collisionData.GetCollided()){
+            if (collisionData.GetCollided()) {
                 // if(ball.GetPreviousCollisionNumber() == wall.GetWallNumber()) {
-                //     ball.MoveToSurface(collisionData.GetPointOfContact());
-                //     return;
+                // ball.MoveToSurface(collisionData.GetPointOfContact());
+                // return;
                 // }
                 HandleWallCollision(ball, collisionData);
                 ClearCollisionNumbers();
             }
         }
     }
-    public void CheckPockets(){ //TODO: make sure a ball cannot miss the pocket
+
+    public void CheckPockets() { // TODO: make sure a ball cannot miss the pocket
         ArrayList<Ball> ballsToRemove = new ArrayList<>();
         for (TablePocket pocket : pockets) {
             for (ICollider collider : colliders) {
@@ -112,7 +115,8 @@ public class PhysicsEngine {
         return colliders.contains(ball);
     }
 
-    public void HandleWallCollision(Ball ball, CollisionData collisionData) { //TODO: BALLS GETTING STUCK IN WALLS
+    public void HandleWallCollision(Ball ball, CollisionData collisionData) { // TODO: (Unlikely) BALLS GETTING STUCK IN
+                                                                              // WALLS
         ball.MoveToSurface(collisionData.GetPointOfContact());
 
         Vector reflectionVector = ball.GetPosition().subtract(collisionData.GetPointOfContact()).normalize();
@@ -123,27 +127,38 @@ public class PhysicsEngine {
         ball.SetVelocity(newVelocityDirection.multiply(1 - COLLISION_LOSS));
     }
 
-    public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) { //TODO: Balls getting stuck in each other
+    public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
         ballA.MoveToSurface(collisionData.GetPointOfContact());
         ballB.MoveToSurface(collisionData.GetPointOfContact());
+        if (ballA.GetPosition().equals(ballB.GetPosition(), 0.1f)) {
+            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().normalize().multiply(0.1f)));
+            ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().normalize().multiply(0.1f)));
+            return;
+        }
+
+        float momentumA = ballA.GetMass() * ballA.GetVelocity().magnitude();
+        float momentumB = ballB.GetMass() * ballB.GetVelocity().magnitude();
+
+        float massA = ballA.GetMass() + ballA.GetVelocity().magnitude() / 10000;
+        float massB = ballB.GetMass() + ballB.GetVelocity().magnitude() / 10000;
 
         Vector collisionAngle = CalculateCollisionAngle(ballA, ballB);
 
-        Vector velocityA = ballA.GetVelocity();
-        Vector velocityB = ballB.GetVelocity();
+        Vector velocityA = ballA.GetVelocity().normalize().multiply(momentumA / massA);
+        Vector velocityB = ballB.GetVelocity().normalize().multiply(momentumB / massB);
 
-        float velocityANormal = velocityA.x *collisionAngle.x + velocityA.y * collisionAngle.y;
+        float velocityANormal = velocityA.x * collisionAngle.x + velocityA.y * collisionAngle.y;
         float velocityATangent = velocityA.x * -collisionAngle.y + velocityA.y * collisionAngle.x;
 
-        float velocityBNormal = velocityB.x *collisionAngle.x + velocityB.y * collisionAngle.y;
+        float velocityBNormal = velocityB.x * collisionAngle.x + velocityB.y * collisionAngle.y;
         float velocityBTangent = velocityB.x * -collisionAngle.y + velocityB.y * collisionAngle.x;
 
-        float newVelocityANormal = velocityANormal * (ballA.GetMass() - ballB.GetMass()) + 2 * ballB.GetMass() * velocityBNormal
-                                                                                            /
-                                                                        (ballA.GetMass() + ballB.GetMass());
-        float newVelocityBNormal = velocityBNormal * (ballB.GetMass() - ballA.GetMass()) + 2 * ballA.GetMass() * velocityANormal
-                                                                                            /
-                                                                        (ballA.GetMass() + ballB.GetMass());
+        float newVelocityANormal = velocityANormal * (massA - massB) + 2 * massB * velocityBNormal
+                /
+                (massA + massB);
+        float newVelocityBNormal = velocityBNormal * (massB - massA) + 2 * massA * velocityANormal
+                /
+                (massA + massB);
 
         float newVelocityAX = newVelocityANormal * collisionAngle.x - velocityATangent * collisionAngle.y;
         float newVelocityAY = newVelocityANormal * collisionAngle.y + velocityATangent * collisionAngle.x;
@@ -158,16 +173,18 @@ public class PhysicsEngine {
     private Vector CalculateCollisionAngle(Ball ballA, Ball ballB) {
         return new Vector(
                 ballB.GetPosition().x - ballA.GetPosition().x,
-                ballB.GetPosition().y - ballA.GetPosition().y
-        ).multiply(1 / ballA.GetPosition().distance(ballB.GetPosition()));
+                ballB.GetPosition().y - ballA.GetPosition().y)
+                .multiply(1 / ballA.GetPosition().distance(ballB.GetPosition()));
     }
 
     public ArrayList<ICollider> GetColliders() {
         return colliders;
     }
+
     public ArrayList<TablePocket> GetPockets() {
         return pockets;
     }
+
     public void ClearCollisionNumbers() {
         for (ICollider collider : colliders) {
             if (collider instanceof Ball ball) {

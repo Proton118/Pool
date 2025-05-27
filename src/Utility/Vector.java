@@ -46,6 +46,13 @@ public class Vector {
     public boolean directionOf(Vector other) {
         return Math.signum(x) == Math.signum(other.x) && Math.signum(y) == Math.signum(other.y);
     }
+    public boolean equals(Vector other, float tolerance) {
+        return Math.abs(this.x - other.x) < tolerance && Math.abs(this.y - other.y) < tolerance;
+    }
+    public Vector divide(float scalar) {
+        if (scalar == 0) throw new IllegalArgumentException("Cannot divide by zero");
+        return new Vector(this.x / scalar, this.y / scalar);
+    }
 
     @Override
     public String toString() {

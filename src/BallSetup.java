@@ -21,8 +21,8 @@ public class BallSetup {
         int currentNumber = 0;
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < i + 1; j++){
-                float xOffset = (i * BALL_RADIUS * 2 + MIN_OFFSET);
-                float yOffset = -i*BALL_RADIUS + j * BALL_RADIUS * 2 + MIN_OFFSET;
+                float xOffset = (i * BALL_RADIUS * 2 + MIN_OFFSET * i);
+                float yOffset = -i*(BALL_RADIUS + MIN_OFFSET) + j * (BALL_RADIUS + MIN_OFFSET) * 2;
                 Vector ballPosition = new Vector(position.x - xOffset, position.y + yOffset);
                 balls.add(new Ball(colorOrder[currentNumber], numberOrder[currentNumber],BALL_RADIUS, ballPosition, BALL_MASS));
                 currentNumber++;
