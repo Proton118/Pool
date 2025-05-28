@@ -5,7 +5,7 @@ import processing.core.PImage;
 public class PoolCue {
     private static final int MAX_CUE_LENGTH = 250;
     public static final float MAX_CUE_SPEED = 350;
-    public static final float CUE_ANIMATION_SPEED = 0.5f;
+    private static final float CUE_ANIMATION_SPEED = 50;
 
     private PApplet app;
     private boolean isActive = false;
@@ -14,6 +14,7 @@ public class PoolCue {
     private Vector startPosition;
     private Vector cueDirection;
     private float cueDistance;
+    private float cueSpeed;
 
     public PoolCue(PApplet app) {
         this.app = app;
@@ -37,14 +38,14 @@ public class PoolCue {
         }
 
         Vector mousePosition = new Vector(app.mouseX, app.mouseY);
-        Vector cueDirection = startPosition.subtract(mousePosition).normalize();
+        cueDirection = startPosition.subtract(mousePosition).normalize();
         cueDistance = mousePosition.distance(startPosition);
 
         if (cueDistance > MAX_CUE_LENGTH) {
             cueDistance = MAX_CUE_LENGTH;
         }
 
-        float speed = cueDistance / MAX_CUE_LENGTH * maxSpeed;
+        cueSpeed = cueDistance / MAX_CUE_LENGTH * maxSpeed;
 
         if(!cueDirection.equals(cueMouseDirection, 0.01f)){
             isActive = false;
@@ -53,7 +54,7 @@ public class PoolCue {
 
         if(!app.mousePressed){
             isActive = false;
-            return cueDirection.multiply(speed);
+            return cueDirection.multiply(cueSpeed);
         } else {
             isActive = true;
         }
@@ -71,7 +72,7 @@ public class PoolCue {
     }
 
     public boolean AnimateCue(float deltaTime) {
-        cueDistance -= CUE_ANIMATION_SPEED * deltaTime;
+        cueDistance -= CUE_ANIMATION_SPEED * cueSpeed / PoolTable.PIXELS_PER_INCH * deltaTime;
         if(cueDistance <= 0) {
             cueDistance = 0;
             return true;

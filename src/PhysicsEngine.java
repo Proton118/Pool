@@ -156,7 +156,7 @@ public class PhysicsEngine {
         ballA.MoveToSurface(collisionData.GetPointOfContact());
         ballB.MoveToSurface(collisionData.GetPointOfContact());
         if (ballA.GetPosition().equals(ballB.GetPosition(), 0.1f)) {
-            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-0.05f)));
+            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-0.1f)));
             ballA.MoveToSurface(collisionData.GetPointOfContact());
             ballB.MoveToSurface(collisionData.GetPointOfContact());
         }

@@ -6,6 +6,9 @@ import processing.core.*;
 public class App extends PApplet {
     private static final float TIME_SCALE = 1 / 2f;
 
+    private AppState appState = AppState.GAME;
+    private GamePhase gamePhase = GamePhase.PLAYING;
+
     private PhysicsEngine physicsEngine = new PhysicsEngine();
     private long previousTime = 0;
 
@@ -16,13 +19,16 @@ public class App extends PApplet {
 
     private boolean breakShot = true;
 
-    private enum GameState {
+    private enum AppState {
         MAIN_SCREEN,
+        GAME,
+        GAME_OVER
+    }
+    public enum GamePhase{
         PLAYING,
         CUE_FIRING,
         CUE_ANIMATION,
-        PLACE_BALL,
-        GAME_OVER
+        PLACE_BALL, 
     }
 
     public static void main(String[] args) {
@@ -52,22 +58,12 @@ public class App extends PApplet {
     }
 
     public void draw() {
-        background(180);
-        int tableWidth = 1400;
-        int tableHeight = 700;
-        image(table.GetTableImage(), width / 2 - tableWidth / 2, height / 2 - tableHeight / 2, tableWidth, tableHeight);
+        DrawGamePhase();
 
-        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
-        previousTime = System.currentTimeMillis();
 
-        physicsEngine.UpdateColliderPositions(deltaTime);
-        physicsEngine.HandleCollisions();
-        physicsEngine.CheckPockets();
-        physicsEngine.CheckOutOfBounds(new Vector(width, height));
-        DrawColliders();
-        if (AreAllBallsAtRest()) {
-            UpdateCueBall();
-        }
+        // if (AreAllBallsAtRest()) {
+        //     UpdateCueBall();
+        // }
     }
 
     public void DrawColliders() {
@@ -123,10 +119,6 @@ public class App extends PApplet {
     }
 
     public void UpdateCueBall() {
-        if (!physicsEngine.IsBallInPocket(cueBall)) {
-            PlaceBall();
-            return;
-        }
         Vector fireVector;
         if (breakShot) {
             fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 2f);
@@ -136,6 +128,7 @@ public class App extends PApplet {
         if (fireVector != null) {
             cueBall.SetPreviousCollisionNumber(0);
             cueBall.SetVelocity(fireVector);
+            gamePhase = GamePhase.CUE_ANIMATION;
         }
     }
 
@@ -160,17 +153,54 @@ public class App extends PApplet {
             cueBall.SetVelocity(new Vector(0, 0));
             cueBall.SetPreviousCollisionNumber(0);
             physicsEngine.AddCollider(cueBall);
+            gamePhase = GamePhase.CUE_FIRING;
         }
         fill(255, 255, 255, 150);
         circle(mouseX, mouseY, PPI * cueBall.GetRadius() * 2);
     }
 
     public void DrawGamePhase(){
+        GameBase();
 
+        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
+        previousTime = System.currentTimeMillis();
+
+        switch(gamePhase) {
+            case PLAYING:
+                physicsEngine.UpdateColliderPositions(deltaTime);
+                physicsEngine.HandleCollisions();
+                physicsEngine.CheckPockets();
+                physicsEngine.CheckOutOfBounds(new Vector(width, height));
+                if(AreAllBallsAtRest()){
+                    gamePhase = GamePhase.CUE_FIRING;
+                }
+                break;
+            case CUE_FIRING:
+                if (!physicsEngine.IsBallInPocket(cueBall)) {
+                    gamePhase = GamePhase.PLACE_BALL;
+                    return;
+                }
+                UpdateCueBall();
+                break;
+            case CUE_ANIMATION:
+                if (cue.AnimateCue(deltaTime)) {
+                    gamePhase = GamePhase.PLAYING;
+                }
+                break;
+            case PLACE_BALL:
+                PlaceBall();
+                break;
+            
+        }
+
+        DrawColliders();
     }
 
     public void GameBase(){
-
+        background(180);
+        int tableWidth = 1400;
+        int tableHeight = 700;
+        image(table.GetTableImage(), width / 2 - tableWidth / 2, height / 2 - tableHeight / 2, tableWidth, tableHeight);
     }
 
 }
