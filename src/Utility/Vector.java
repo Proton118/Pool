@@ -53,6 +53,9 @@ public class Vector {
         if (scalar == 0) throw new IllegalArgumentException("Cannot divide by zero");
         return new Vector(this.x / scalar, this.y / scalar);
     }
+    public float angle() {
+        return (float) Math.atan2(y, x);
+    }
 
     @Override
     public String toString() {

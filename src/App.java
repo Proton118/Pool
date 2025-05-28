@@ -16,6 +16,15 @@ public class App extends PApplet {
 
     private boolean breakShot = true;
 
+    private enum GameState {
+        MAIN_SCREEN,
+        PLAYING,
+        CUE_FIRING,
+        CUE_ANIMATION,
+        PLACE_BALL,
+        GAME_OVER
+    }
+
     public static void main(String[] args) {
         PApplet.main("App");
     }
@@ -120,7 +129,7 @@ public class App extends PApplet {
         }
         Vector fireVector;
         if (breakShot) {
-            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 1.5f);
+            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 2f);
         } else {
             fireVector = cue.UpdateCue(cueBall);
         }
@@ -154,6 +163,14 @@ public class App extends PApplet {
         }
         fill(255, 255, 255, 150);
         circle(mouseX, mouseY, PPI * cueBall.GetRadius() * 2);
+    }
+
+    public void DrawGamePhase(){
+
+    }
+
+    public void GameBase(){
+
     }
 
 }
