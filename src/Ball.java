@@ -82,7 +82,6 @@ public class Ball implements ICollider {
      */
     public void MoveToSurface(Vector pointOfContact) {
         Vector direction = position.subtract(pointOfContact).normalize();
-        System.out.println("Position: " + position + ", Point of Contact: " + pointOfContact + ", Direction: " + direction);
         position = pointOfContact.add(direction.multiply(radius + SURFACE_TOLERANCE));
     }
 

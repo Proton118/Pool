@@ -58,12 +58,37 @@ public class App extends PApplet {
     }
 
     public void draw() {
-        DrawGamePhase();
+        switch (appState) {
+            case MAIN_SCREEN:
+                DrawMainScreen();
+                break;
+            case GAME:
+                DrawGamePhase();
+                break;
+            case GAME_OVER:
+                DrawGameOver();
+                break;
+        }
+    }
 
+    private void DrawMainScreen() {
+        background(0);
+        fill(255);
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text("Welcome to Pool!", width / 2, height / 2 - 50);
+        textSize(24);
+        text("Press 'S' to Start", width / 2, height / 2 + 50);
+    }
 
-        // if (AreAllBallsAtRest()) {
-        //     UpdateCueBall();
-        // }
+    private void DrawGameOver(){
+        background(0);
+        fill(255);
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        text("Game Over!", width / 2, height / 2 - 50);
+        textSize(24);
+        text("Press 'R' to Restart", width / 2, height / 2 + 50);
     }
 
     public void DrawColliders() {
@@ -121,7 +146,7 @@ public class App extends PApplet {
     public void UpdateCueBall() {
         Vector fireVector;
         if (breakShot) {
-            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 2f);
+            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 5f);
         } else {
             fireVector = cue.UpdateCue(cueBall);
         }
@@ -171,6 +196,7 @@ public class App extends PApplet {
                 physicsEngine.HandleCollisions();
                 physicsEngine.CheckPockets();
                 physicsEngine.CheckOutOfBounds(new Vector(width, height));
+
                 if(AreAllBallsAtRest()){
                     gamePhase = GamePhase.CUE_FIRING;
                 }
@@ -178,7 +204,7 @@ public class App extends PApplet {
             case CUE_FIRING:
                 if (!physicsEngine.IsBallInPocket(cueBall)) {
                     gamePhase = GamePhase.PLACE_BALL;
-                    return;
+                    break;
                 }
                 UpdateCueBall();
                 break;

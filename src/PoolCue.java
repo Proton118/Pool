@@ -4,7 +4,7 @@ import processing.core.PImage;
 
 public class PoolCue {
     private static final int MAX_CUE_LENGTH = 250;
-    public static final float MAX_CUE_SPEED = 350;
+    public static final float MAX_CUE_SPEED = 250;
     private static final float CUE_ANIMATION_SPEED = 50;
 
     private PApplet app;
