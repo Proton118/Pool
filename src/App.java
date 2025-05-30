@@ -6,10 +6,10 @@ import processing.core.*;
 public class App extends PApplet {
     private static final float TIME_SCALE = 1 / 2f;
 
-    private AppState appState = AppState.GAME;
-    private GamePhase gamePhase = GamePhase.PLAYING;
+    private AppState appState;
+    private GamePhase gamePhase;
 
-    private PhysicsEngine physicsEngine = new PhysicsEngine();
+    private PhysicsEngine physicsEngine;
     private long previousTime = 0;
 
     private PoolCue cue;
@@ -17,7 +17,7 @@ public class App extends PApplet {
     private BallSetup ballSetup;
     private PoolTable table;
 
-    private boolean breakShot = true;
+    private boolean breakShot;
 
     private enum AppState {
         MAIN_SCREEN,
@@ -42,17 +42,23 @@ public class App extends PApplet {
     }
 
     public void setup() {
+        cue = new PoolCue(this);
         table = new PoolTable(width, height, this);
+
         float PPI = PoolTable.PIXELS_PER_INCH;
         cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
         ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
 
+        physicsEngine = new PhysicsEngine();
         physicsEngine.AddCollider(cueBall)
                 .AddColliders(ballSetup.GetBalls())
                 .AddColliders(table.GetWalls())
                 .AddPockets(table.GetPockets());
 
-        cue = new PoolCue(this);
+        breakShot = true;
+        appState = AppState.GAME;
+        gamePhase = GamePhase.CUE_FIRING;
+
 
         previousTime = System.currentTimeMillis();
     }
@@ -146,7 +152,7 @@ public class App extends PApplet {
     public void UpdateCueBall() {
         Vector fireVector;
         if (breakShot) {
-            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 5f);
+            fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 1.75f);
         } else {
             fireVector = cue.UpdateCue(cueBall);
         }
@@ -154,6 +160,7 @@ public class App extends PApplet {
             cueBall.SetPreviousCollisionNumber(0);
             cueBall.SetVelocity(fireVector);
             gamePhase = GamePhase.CUE_ANIMATION;
+            breakShot = false;
         }
     }
 
@@ -197,12 +204,17 @@ public class App extends PApplet {
                 physicsEngine.CheckPockets();
                 physicsEngine.CheckOutOfBounds(new Vector(width, height));
 
+                if(physicsEngine.IsBallInPocket(ballSetup.GetEightBall())){
+                    appState = AppState.GAME_OVER;
+                    break;
+                }
+
                 if(AreAllBallsAtRest()){
                     gamePhase = GamePhase.CUE_FIRING;
                 }
                 break;
             case CUE_FIRING:
-                if (!physicsEngine.IsBallInPocket(cueBall)) {
+                if (physicsEngine.IsBallInPocket(cueBall)) {
                     gamePhase = GamePhase.PLACE_BALL;
                     break;
                 }

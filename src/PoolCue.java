@@ -4,8 +4,8 @@ import processing.core.PImage;
 
 public class PoolCue {
     private static final int MAX_CUE_LENGTH = 250;
-    public static final float MAX_CUE_SPEED = 250;
-    private static final float CUE_ANIMATION_SPEED = 50;
+    public static final float MAX_CUE_SPEED = 600;
+    private static final float CUE_ANIMATION_SPEED = 200;
 
     private PApplet app;
     private boolean isActive = false;
@@ -45,8 +45,6 @@ public class PoolCue {
             cueDistance = MAX_CUE_LENGTH;
         }
 
-        cueSpeed = cueDistance / MAX_CUE_LENGTH * maxSpeed;
-
         if(!cueDirection.equals(cueMouseDirection, 0.01f)){
             isActive = false;
             return null;
@@ -54,6 +52,7 @@ public class PoolCue {
 
         if(!app.mousePressed){
             isActive = false;
+            cueSpeed = cueDistance / MAX_CUE_LENGTH * maxSpeed;
             return cueDirection.multiply(cueSpeed);
         } else {
             isActive = true;

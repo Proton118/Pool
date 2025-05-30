@@ -11,6 +11,7 @@ public class BallSetup {
     private static final Color C2 = new Color(230, 20, 20);
 
     private ArrayList<ICollider> balls;
+    private Ball eightBall;
 
     private int[] numberOrder = {1, 11, 5, 2, 8, 10, 9, 7, 14, 4, 6, 15, 13, 3, 12};
     private Color[] colorOrder = {C1, C2, C1, C1, Color.BLACK, C2, C2, C1, C2, C1, C1, C2, C2, C1, C2};
@@ -28,9 +29,13 @@ public class BallSetup {
                 currentNumber++;
             }
         }
+        eightBall = (Ball)balls.get(4);
     }
 
     public ArrayList<ICollider> GetBalls() {
         return balls;
+    }
+    public Ball GetEightBall() {
+        return eightBall;
     }
 }

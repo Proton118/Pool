@@ -4,7 +4,8 @@ import Utility.CollisionData;
 import Utility.Vector;
 
 public class PhysicsEngine {
-    private static final float COLLISION_LOSS = 0.15f;
+    private static final float COLLISION_LOSS_WALL = 0.3f;
+    private static final float COLLISION_LOSS_BALL = 0.1f;
 
     private ArrayList<ICollider> colliders;
     private ArrayList<TablePocket> pockets;
@@ -47,7 +48,7 @@ public class PhysicsEngine {
 
     private void CheckCollision(ICollider a, ICollider b) {
         float ballStep = 0.003f;
-        int ballRecursionDepth = 1500;
+        int ballRecursionDepth = 2000;
 
         float wallStep = 0.05f;
         int wallRecursionDepth = 10000;
@@ -84,7 +85,7 @@ public class PhysicsEngine {
         }
     }
 
-    public void CheckPockets() { // TODO: make sure a ball cannot miss the pocket
+    public void CheckPockets() {
         ArrayList<Ball> ballsToRemove = new ArrayList<>();
         for (TablePocket pocket : pockets) {
             for (ICollider collider : colliders) {
@@ -130,11 +131,10 @@ public class PhysicsEngine {
     }
 
     public boolean IsBallInPocket(Ball ball) {
-        return colliders.contains(ball);
+        return !colliders.contains(ball);
     }
 
-    public void HandleWallCollision(Ball ball, CollisionData collisionData) { // TODO: (Unlikely) BALLS GETTING STUCK IN
-                                                                              // WALLS
+    public void HandleWallCollision(Ball ball, CollisionData collisionData) {
         // if (collisionData.GetWallNormal() != null) {
         //     ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().multiply(-0.01f)));
         //     ball.MoveToSurfaceWall(collisionData.GetPointOfContact(), collisionData.GetWallNormal());
@@ -147,7 +147,7 @@ public class PhysicsEngine {
                 /
                 (reflectionVector.dot(reflectionVector)));
         Vector newVelocityDirection = projectionVector.multiply(2).subtract(ball.GetVelocity()).multiply(-1);
-        ball.SetVelocity(newVelocityDirection.multiply(1 - COLLISION_LOSS));
+        ball.SetVelocity(newVelocityDirection.multiply(1 - COLLISION_LOSS_WALL));
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
@@ -184,8 +184,8 @@ public class PhysicsEngine {
         float newVelocityBX = newVelocityBNormal * collisionAngle.x - velocityBTangent * collisionAngle.y;
         float newVelocityBY = newVelocityBNormal * collisionAngle.y + velocityBTangent * collisionAngle.x;
 
-        ballA.SetVelocity(new Vector(newVelocityAX, newVelocityAY).multiply(1 - COLLISION_LOSS));
-        ballB.SetVelocity(new Vector(newVelocityBX, newVelocityBY).multiply(1 - COLLISION_LOSS));
+        ballA.SetVelocity(new Vector(newVelocityAX, newVelocityAY).multiply(1 - COLLISION_LOSS_BALL));
+        ballB.SetVelocity(new Vector(newVelocityBX, newVelocityBY).multiply(1 - COLLISION_LOSS_BALL));
     }
 
     private Vector CalculateCollisionAngle(Ball ballA, Ball ballB) {
