@@ -45,22 +45,7 @@ public class App extends PApplet {
         cue = new PoolCue(this);
         table = new PoolTable(width, height, this);
 
-        float PPI = PoolTable.PIXELS_PER_INCH;
-        cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
-        ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
-
-        physicsEngine = new PhysicsEngine();
-        physicsEngine.AddCollider(cueBall)
-                .AddColliders(ballSetup.GetBalls())
-                .AddColliders(table.GetWalls())
-                .AddPockets(table.GetPockets());
-
-        breakShot = true;
-        appState = AppState.GAME;
-        gamePhase = GamePhase.CUE_FIRING;
-
-
-        previousTime = System.currentTimeMillis();
+        GameSetup();
     }
 
     public void draw() {
@@ -87,14 +72,24 @@ public class App extends PApplet {
         text("Press 'S' to Start", width / 2, height / 2 + 50);
     }
 
-    private void DrawGameOver(){
-        background(0);
+    private void DrawGameOver() {
+        GameBase();
+        DrawColliders();
+        float deltaTime = getDeltaTime();
+        physicsEngine.UpdateColliderPositions(deltaTime);
+        physicsEngine.HandleCollisions();
+        physicsEngine.CheckPockets();
+        physicsEngine.CheckOutOfBounds(new Vector(width, height));
+
         fill(255);
         textSize(32);
         textAlign(CENTER, CENTER);
         text("Game Over!", width / 2, height / 2 - 50);
         textSize(24);
         text("Press 'R' to Restart", width / 2, height / 2 + 50);
+        if(keyPressed && key == 'r') {
+            GameSetup();
+        }
     }
 
     public void DrawColliders() {
@@ -194,8 +189,7 @@ public class App extends PApplet {
     public void DrawGamePhase(){
         GameBase();
 
-        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
-        previousTime = System.currentTimeMillis();
+        float deltaTime = getDeltaTime();
 
         switch(gamePhase) {
             case PLAYING:
@@ -239,6 +233,31 @@ public class App extends PApplet {
         int tableWidth = 1400;
         int tableHeight = 700;
         image(table.GetTableImage(), width / 2 - tableWidth / 2, height / 2 - tableHeight / 2, tableWidth, tableHeight);
+    }
+
+    public void GameSetup(){
+        float PPI = PoolTable.PIXELS_PER_INCH;
+        cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
+        ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
+
+        physicsEngine = new PhysicsEngine();
+        physicsEngine.AddCollider(cueBall)
+                .AddColliders(ballSetup.GetBalls())
+                .AddColliders(table.GetWalls())
+                .AddPockets(table.GetPockets());
+
+        breakShot = true;
+        appState = AppState.GAME;
+        gamePhase = GamePhase.CUE_FIRING;
+
+
+        previousTime = System.currentTimeMillis();
+    }
+
+    public float getDeltaTime() {
+        float deltaTime =(System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
+        previousTime = System.currentTimeMillis();
+        return deltaTime;
     }
 
 }
