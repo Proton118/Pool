@@ -5,12 +5,15 @@ import processing.core.*;
 
 public class App extends PApplet {
     private static final float TIME_SCALE = 1 / 2f;
+    private static final float START_DELAY = 0.25f;
 
     private AppState appState;
     private GamePhase gamePhase;
 
     private PhysicsEngine physicsEngine;
     private long previousTime = 0;
+
+    private float startDelayCurrent;
 
     private PoolCue cue;
     private Ball cueBall;
@@ -21,6 +24,7 @@ public class App extends PApplet {
 
     private enum AppState {
         MAIN_SCREEN,
+        START_DELAY,
         GAME,
         GAME_OVER
     }
@@ -46,12 +50,16 @@ public class App extends PApplet {
         table = new PoolTable(width, height, this);
 
         GameSetup();
+        appState = AppState.MAIN_SCREEN;
     }
 
     public void draw() {
         switch (appState) {
             case MAIN_SCREEN:
                 DrawMainScreen();
+                break;
+            case START_DELAY:
+                StartDelay();
                 break;
             case GAME:
                 DrawGamePhase();
@@ -63,13 +71,28 @@ public class App extends PApplet {
     }
 
     private void DrawMainScreen() {
-        background(0);
+        GameBase();
+        DrawColliders();
+
         fill(255);
         textSize(32);
         textAlign(CENTER, CENTER);
-        text("Welcome to Pool!", width / 2, height / 2 - 50);
+        text("Pool.", width / 2, height / 2 - 50);
         textSize(24);
-        text("Press 'S' to Start", width / 2, height / 2 + 50);
+        if(mousePressed){
+            GameSetup();
+        }
+    }
+
+    private void StartDelay(){
+        GameBase();
+        DrawColliders();
+        float deltaTime = getDeltaTime();
+        startDelayCurrent += deltaTime;
+        if(startDelayCurrent >= START_DELAY){
+            startDelayCurrent = 0;
+            appState = AppState.GAME;
+        }
     }
 
     private void DrawGameOver() {
@@ -246,7 +269,7 @@ public class App extends PApplet {
                 .AddPockets(table.GetPockets());
 
         breakShot = true;
-        appState = AppState.GAME;
+        appState = AppState.START_DELAY;
         gamePhase = GamePhase.CUE_FIRING;
 
 
