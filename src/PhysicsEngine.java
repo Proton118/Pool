@@ -47,7 +47,7 @@ public class PhysicsEngine {
     }
 
     private void CheckCollision(ICollider a, ICollider b) {
-        float ballStep = 0.0001f;
+        float ballStep = 0.00001f;
         int ballRecursionDepth = 10000;
 
         float wallStep = 0.001f;
@@ -135,13 +135,6 @@ public class PhysicsEngine {
     }
 
     public void HandleWallCollision(Ball ball, CollisionData collisionData) {
-        // if (collisionData.GetWallNormal() != null) {
-        //     ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().multiply(-0.01f)));
-        //     ball.MoveToSurfaceWall(collisionData.GetPointOfContact(), collisionData.GetWallNormal());
-        // } else {
-        //     ball.MoveToSurface(collisionData.GetPointOfContact());
-        // }
-
         Vector reflectionVector = ball.GetPosition().subtract(collisionData.GetPointOfContact()).normalize();
         Vector projectionVector = reflectionVector.multiply((ball.GetVelocity().dot(reflectionVector))
                 /
@@ -151,9 +144,6 @@ public class PhysicsEngine {
     }
 
     public void HandleBallCollision(Ball ballA, Ball ballB, CollisionData collisionData) {
-        // ballA.MoveToSurface(collisionData.GetPointOfContact());
-        // ballB.MoveToSurface(collisionData.GetPointOfContact());
-
         float momentumA = ballA.GetMass() * ballA.GetVelocity().magnitude();
         float momentumB = ballB.GetMass() * ballB.GetVelocity().magnitude();
 
@@ -216,8 +206,13 @@ public class PhysicsEngine {
             System.out.println("Max recursion depth reached for ball collision");
             return CollisionCalculator.CalculateBallCollision(ballA, ballB);
         }
-        ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-step)));
-        ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().multiply(-step)));
+        if(ballA.GetVelocity().magnitude() == 0 && ballB.GetVelocity().magnitude() == 0){
+            ballA.SetPosition(ballA.GetPosition().add(new Vector(-1, 0).multiply(-step)));
+            ballB.SetPosition(ballB.GetPosition().add(new Vector(1, 0).multiply(-step)));
+        } else {
+            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-step)));
+            ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().multiply(-step)));
+        }
         CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
         if(!collisionData.GetCollided()) {
             return collisionData;
