@@ -86,9 +86,8 @@ public class App extends PApplet {
         textAlign(CENTER, CENTER);
         text("Game Over!", width / 2, height / 2 - 50);
         textSize(24);
-        text("Press 'R' to Restart", width / 2, height / 2 + 50);
-        if(keyPressed && key == 'r') {
-            GameSetup();
+        if(mousePressed) {
+            appState = AppState.MAIN_SCREEN;
         }
     }
 
