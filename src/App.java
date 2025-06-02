@@ -4,8 +4,7 @@ import Utility.Vector;
 import processing.core.*;
 
 public class App extends PApplet {
-    private static final float TIME_SCALE = 1 / 2f;
-    private static final float START_DELAY = 0.25f;
+    private static final float TIME_SCALE = 1 / 2.2f;
 
     private AppState appState;
     private GamePhase gamePhase;
@@ -13,7 +12,7 @@ public class App extends PApplet {
     private PhysicsEngine physicsEngine;
     private long previousTime = 0;
 
-    private float startDelayCurrent;
+    private boolean waitingForMouseUp = false;
 
     private PoolCue cue;
     private Ball cueBall;
@@ -24,7 +23,6 @@ public class App extends PApplet {
 
     private enum AppState {
         MAIN_SCREEN,
-        START_DELAY,
         GAME,
         GAME_OVER
     }
@@ -54,12 +52,12 @@ public class App extends PApplet {
     }
 
     public void draw() {
+        if(!mousePressed && waitingForMouseUp) {
+            waitingForMouseUp = false;
+        }
         switch (appState) {
             case MAIN_SCREEN:
                 DrawMainScreen();
-                break;
-            case START_DELAY:
-                StartDelay();
                 break;
             case GAME:
                 DrawGamePhase();
@@ -75,22 +73,16 @@ public class App extends PApplet {
         DrawColliders();
 
         fill(0);
-        textSize(120);
+        textSize(100);
         textAlign(CENTER, CENTER);
-        text("Pool.", width / 2, height / 2);
-        if(mousePressed){
-            GameSetup();
-        }
-    }
+        text("Pool", width / 2, height / 2);
 
-    private void StartDelay(){
-        GameBase();
-        DrawColliders();
-        float deltaTime = getDeltaTime();
-        startDelayCurrent += deltaTime;
-        if(startDelayCurrent >= START_DELAY){
-            startDelayCurrent = 0;
-            appState = AppState.GAME;
+        Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 75), "Start Game", this);
+        startButton.drawText();
+        // startButton.draw(new Color(255, 255, 255));
+        if(startButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+            GameSetup();
+            waitingForMouseUp = true;
         }
     }
 
@@ -109,6 +101,7 @@ public class App extends PApplet {
         text("Game Over!", width / 2, height / 2);
         if(mousePressed) {
             appState = AppState.MAIN_SCREEN;
+            waitingForMouseUp = true;
         }
     }
 
@@ -165,6 +158,9 @@ public class App extends PApplet {
     }
 
     public void UpdateCueBall() {
+        if(waitingForMouseUp) {
+            return;
+        }
         Vector fireVector;
         if (breakShot) {
             fireVector = cue.UpdateCue(cueBall, PoolCue.MAX_CUE_SPEED * 1.75f);
@@ -267,7 +263,7 @@ public class App extends PApplet {
                 .AddPockets(table.GetPockets());
 
         breakShot = true;
-        appState = AppState.START_DELAY;
+        appState = AppState.GAME;
         gamePhase = GamePhase.CUE_FIRING;
 
 

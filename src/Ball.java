@@ -2,7 +2,7 @@ import Utility.Color;
 import Utility.Vector;
 
 public class Ball implements ICollider {
-    private static final float FRICTION_CONSTANT = 0.15f;
+    private static final float FRICTION_CONSTANT = 0.14f;
     private static final float GRAVITY = 386;
     private static final float SURFACE_TOLERANCE = 0.05f;
 
