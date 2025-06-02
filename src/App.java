@@ -74,11 +74,10 @@ public class App extends PApplet {
         GameBase();
         DrawColliders();
 
-        fill(255);
-        textSize(32);
+        fill(0);
+        textSize(120);
         textAlign(CENTER, CENTER);
-        text("Pool.", width / 2, height / 2 - 50);
-        textSize(24);
+        text("Pool.", width / 2, height / 2);
         if(mousePressed){
             GameSetup();
         }
@@ -104,11 +103,10 @@ public class App extends PApplet {
         physicsEngine.CheckPockets();
         physicsEngine.CheckOutOfBounds(new Vector(width, height));
 
-        fill(255);
-        textSize(32);
+        fill(0);
+        textSize(120);
         textAlign(CENTER, CENTER);
-        text("Game Over!", width / 2, height / 2 - 50);
-        textSize(24);
+        text("Game Over!", width / 2, height / 2);
         if(mousePressed) {
             appState = AppState.MAIN_SCREEN;
         }

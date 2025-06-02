@@ -47,8 +47,8 @@ public class PhysicsEngine {
     }
 
     private void CheckCollision(ICollider a, ICollider b) {
-        float ballStep = 0.00001f;
-        int ballRecursionDepth = 10000;
+        float ballStep = 0.000015f;
+        int ballRecursionDepth = 11000;
 
         float wallStep = 0.001f;
         int wallRecursionDepth = 10000;

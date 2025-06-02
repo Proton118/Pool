@@ -6,7 +6,7 @@ import Utility.Vector;
 public class BallSetup {
     private static final float BALL_RADIUS = 2.25f;
     private static final float BALL_MASS = 0.17f;
-    private static final float MIN_OFFSET = 0.3f;
+    private static final float MIN_OFFSET = 0.25f;
     private static final Color C1 = new Color(230, 230, 20);
     private static final Color C2 = new Color(230, 20, 20);
 
