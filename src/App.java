@@ -31,6 +31,7 @@ public class App extends PApplet {
         CUE_FIRING,
         CUE_ANIMATION,
         PLACE_BALL, 
+        PAUSED,
     }
 
     public static void main(String[] args) {
@@ -191,7 +192,7 @@ public class App extends PApplet {
             return;
         }
 
-        if (mousePressed) {
+        if (mousePressed && !waitingForMouseUp) {
             cueBall.SetPosition(new Vector(mouseX / PPI, mouseY / PPI));
             cueBall.SetVelocity(new Vector(0, 0));
             cueBall.SetPreviousCollisionNumber(0);
@@ -200,6 +201,22 @@ public class App extends PApplet {
         }
         fill(255, 255, 255, 150);
         circle(mouseX, mouseY, PPI * cueBall.GetRadius() * 2);
+    }
+
+    @Override
+    public void keyPressed(){
+        if(key == ESC){
+            if(appState != AppState.GAME) { return;}
+            if(gamePhase != GamePhase.PAUSED){
+                gamePhase = GamePhase.PAUSED;
+                cue.ResetCue();
+                waitingForMouseUp = true;
+                key = 0;
+            } else {
+                appState = AppState.MAIN_SCREEN;
+                key = 0;
+            }
+        }
     }
 
     public void DrawGamePhase(){
@@ -237,6 +254,19 @@ public class App extends PApplet {
                 break;
             case PLACE_BALL:
                 PlaceBall();
+                break;
+            case PAUSED:
+                fill(0);
+                noStroke();
+                textSize(50);
+                textAlign(CENTER, CENTER);
+                text("PAUSED", width / 2, height / 2 - 30);
+                textSize(25);
+                text("Click to Resume or esc again to quit to main menu", width / 2, height / 2 + 50);
+                if(mousePressed && !waitingForMouseUp){
+                    gamePhase = GamePhase.PLAYING;
+                    waitingForMouseUp = true;
+                }
                 break;
             
         }

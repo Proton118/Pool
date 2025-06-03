@@ -93,4 +93,8 @@ public class PoolCue {
         app.popMatrix();
     }
 
+    public void ResetCue(){
+        isActive = false;
+    }
+
 }
