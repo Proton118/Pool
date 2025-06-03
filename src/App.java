@@ -135,10 +135,10 @@ public class App extends PApplet {
     public void DrawBall(Ball ball) {
         float PPI = PoolTable.PIXELS_PER_INCH;
         fill(ball.GetColor().r, ball.GetColor().g, ball.GetColor().b);
-        circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, ball.GetRadius() * 2 * PPI);
+        circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, Ball.RADIUS * 2 * PPI);
         if (ball.GetBallNumber() != -1) {
             fill(255);
-            circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, ball.GetRadius() * (9.75f / 10) * PPI);
+            circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, Ball.RADIUS * (9.75f / 10) * PPI);
             fill(0);
             textSize(12);
             textAlign(CENTER, CENTER);
@@ -180,15 +180,15 @@ public class App extends PApplet {
         float PPI = PoolTable.PIXELS_PER_INCH;
 
         boolean cueBallCollidingWithOtherBall = physicsEngine.IsBallInArea(new Vector(mouseX / PPI, mouseY / PPI),
-                cueBall.GetRadius());
-        boolean cueBallOutOfBounds = mouseX + cueBall.GetRadius() * PPI > width / 2 + PoolTable.TABLE_WIDTH * PPI / 2 ||
-                mouseX - cueBall.GetRadius() * PPI < width / 2 - PoolTable.TABLE_WIDTH * PPI / 2 ||
-                mouseY + cueBall.GetRadius() * PPI > height / 2 + PoolTable.TABLE_HEIGHT * PPI / 2 ||
-                mouseY - cueBall.GetRadius() * PPI < height / 2 - PoolTable.TABLE_HEIGHT * PPI / 2;
+                Ball.RADIUS);
+        boolean cueBallOutOfBounds = mouseX + Ball.RADIUS * PPI > width / 2 + PoolTable.TABLE_WIDTH * PPI / 2 ||
+                mouseX - Ball.RADIUS * PPI < width / 2 - PoolTable.TABLE_WIDTH * PPI / 2 ||
+                mouseY + Ball.RADIUS * PPI > height / 2 + PoolTable.TABLE_HEIGHT * PPI / 2 ||
+                mouseY - Ball.RADIUS * PPI < height / 2 - PoolTable.TABLE_HEIGHT * PPI / 2;
 
         if (cueBallCollidingWithOtherBall || cueBallOutOfBounds) {
             fill(255, 100, 100, 150);
-            circle(mouseX, mouseY, cueBall.GetRadius() * 2 * PPI);
+            circle(mouseX, mouseY, Ball.RADIUS * 2 * PPI);
             return;
         }
 
@@ -200,7 +200,7 @@ public class App extends PApplet {
             gamePhase = GamePhase.CUE_FIRING;
         }
         fill(255, 255, 255, 150);
-        circle(mouseX, mouseY, PPI * cueBall.GetRadius() * 2);
+        circle(mouseX, mouseY, PPI * Ball.RADIUS * 2);
     }
 
     @Override
@@ -283,7 +283,7 @@ public class App extends PApplet {
 
     public void GameSetup(){
         float PPI = PoolTable.PIXELS_PER_INCH;
-        cueBall = new Ball(2.25f, new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
+        cueBall = new Ball(new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
         ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
 
         physicsEngine = new PhysicsEngine();

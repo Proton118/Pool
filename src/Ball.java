@@ -2,11 +2,12 @@ import Utility.Color;
 import Utility.Vector;
 
 public class Ball implements ICollider {
+    public static final float RADIUS = 2.25f;
+
     private static final float FRICTION_CONSTANT = 0.14f;
     private static final float GRAVITY = 386;
     private static final float SURFACE_TOLERANCE = 0.05f;
 
-    private float radius;
     private Vector position;
     private Vector velocity;
     private float acceleration;
@@ -15,8 +16,7 @@ public class Ball implements ICollider {
     private int ballNumber;
     private int previousCollisionNumber = 0;
 
-    public Ball(Color color, int ballNumber, float radius, Vector position, float mass) {
-        this.radius = radius;
+    public Ball(Color color, int ballNumber, Vector position, float mass) {
         this.position = position;
         this.mass = mass;
         this.velocity = new Vector(0, 0);
@@ -24,8 +24,7 @@ public class Ball implements ICollider {
         this.color = color;
         this.ballNumber = ballNumber;
     }
-    public Ball(float radius, Vector position, float mass) {
-        this.radius = radius;
+    public Ball(Vector position, float mass) {
         this.position = position;
         this.mass = mass;
         this.velocity = new Vector(0, 0);
@@ -82,11 +81,11 @@ public class Ball implements ICollider {
      */
     public void MoveToSurface(Vector pointOfContact) {
         Vector direction = position.subtract(pointOfContact).normalize();
-        position = pointOfContact.add(direction.multiply(radius + SURFACE_TOLERANCE));
+        position = pointOfContact.add(direction.multiply(RADIUS + SURFACE_TOLERANCE));
     }
 
     public void MoveToSurfaceWall(Vector pointOfContact, Vector wallNormal) {
-        Vector offset = wallNormal.multiply(-radius + SURFACE_TOLERANCE);
+        Vector offset = wallNormal.multiply(-RADIUS + SURFACE_TOLERANCE);
         position = pointOfContact.add(offset);
     }
 
@@ -110,15 +109,6 @@ public class Ball implements ICollider {
     }
     public Vector GetVelocity() {
         return velocity;
-    }
-
-    /**
-     * The radius of the ball
-     * 
-     * @return The radius of the ball
-     */
-    public float GetRadius() {
-        return radius;
     }
 
     /**

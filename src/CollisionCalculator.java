@@ -7,12 +7,12 @@ public final class CollisionCalculator {
 
     private static boolean AreBallsColliding(Ball a, Ball b) {
         float distance = a.GetPosition().distance(b.GetPosition());
-        return distance <= (a.GetRadius() + b.GetRadius());
+        return distance <= (Ball.RADIUS + Ball.RADIUS);
     }
 
     private static Vector BallPointOfContact(Ball a, Ball b) {
         Vector direction = a.GetPosition().subtract(b.GetPosition()).normalize();
-        Vector pointOfContact = b.GetPosition().add(direction.multiply(b.GetRadius()));
+        Vector pointOfContact = b.GetPosition().add(direction.multiply(Ball.RADIUS));
 
         return pointOfContact;
     }
@@ -29,10 +29,10 @@ public final class CollisionCalculator {
         Vector circleDistance = new Vector(Math.abs(ball.GetPosition().x - wall.GetPosition().x),
                 Math.abs(ball.GetPosition().y - wall.GetPosition().y));
 
-        if (Math.abs(circleDistance.x) > (wall.GetWidth() / 2 + ball.GetRadius())) {
+        if (Math.abs(circleDistance.x) > (wall.GetWidth() / 2 + Ball.RADIUS)) {
             return new CollisionData(false);
         }
-        if (Math.abs(circleDistance.y) > (wall.GetHeight() / 2 + ball.GetRadius())) {
+        if (Math.abs(circleDistance.y) > (wall.GetHeight() / 2 + Ball.RADIUS)) {
             return new CollisionData(false);
         }
 
@@ -55,7 +55,7 @@ public final class CollisionCalculator {
                 * (circleDistance.x - wall.GetWidth() / 2) +
                 (circleDistance.y - wall.GetHeight() / 2) * (circleDistance.y - wall.GetHeight() / 2);
 
-        if (cornerDist_sq <= (ball.GetRadius() * ball.GetRadius())) {
+        if (cornerDist_sq <= (Ball.RADIUS * Ball.RADIUS)) {
             Vector pointOfContact = new Vector(ball.GetPosition().x > wall.GetPosition().x ? 1 : -1,
                     ball.GetPosition().y > wall.GetPosition().y ? 1 : -1);
             pointOfContact.x *= wall.GetWidth() / 2;

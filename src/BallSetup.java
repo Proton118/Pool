@@ -4,9 +4,8 @@ import Utility.Color;
 import Utility.Vector;
 
 public class BallSetup {
-    private static final float BALL_RADIUS = 2.25f;
     private static final float BALL_MASS = 0.17f;
-    private static final float MIN_OFFSET = 0.25f;
+    private static final float MIN_OFFSET = 0.26f;
     private static final Color C1 = new Color(230, 230, 20);
     private static final Color C2 = new Color(230, 20, 20);
 
@@ -22,10 +21,10 @@ public class BallSetup {
         int currentNumber = 0;
         for(int i = 0; i < 5; i++){
             for(int j = 0; j < i + 1; j++){
-                float xOffset = (i * BALL_RADIUS * 2 + MIN_OFFSET * i);
-                float yOffset = -i*(BALL_RADIUS + MIN_OFFSET) + j * (BALL_RADIUS + MIN_OFFSET) * 2;
+                float xOffset = (i * Ball.RADIUS * 2 + MIN_OFFSET * i);
+                float yOffset = -i*(Ball.RADIUS + MIN_OFFSET) + j * (Ball.RADIUS + MIN_OFFSET) * 2;
                 Vector ballPosition = new Vector(position.x - xOffset, position.y + yOffset);
-                balls.add(new Ball(colorOrder[currentNumber], numberOrder[currentNumber],BALL_RADIUS, ballPosition, BALL_MASS));
+                balls.add(new Ball(colorOrder[currentNumber], numberOrder[currentNumber], ballPosition, BALL_MASS));
                 currentNumber++;
             }
         }

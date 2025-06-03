@@ -107,10 +107,10 @@ public class PhysicsEngine {
         screenSize = screenSize.multiply(1 / PPI);
         for (ICollider collider : colliders) {
             if (collider instanceof Ball ball) {
-                boolean outOfBounds = ball.GetPosition().x + ball.GetRadius() > screenSize.x / 2 + (PoolTable.TABLE_WIDTH + buffer) / 2 ||
-                        ball.GetPosition().x - ball.GetRadius() < screenSize.x / 2 - (PoolTable.TABLE_WIDTH + buffer)/ 2 ||
-                        ball.GetPosition().y + ball.GetRadius() > screenSize.y / 2 + (PoolTable.TABLE_HEIGHT + buffer) / 2 ||
-                        ball.GetPosition().y - ball.GetRadius() < screenSize.y / 2 - (PoolTable.TABLE_HEIGHT + buffer) / 2;
+                boolean outOfBounds = ball.GetPosition().x + Ball.RADIUS > screenSize.x / 2 + (PoolTable.TABLE_WIDTH + buffer) / 2 ||
+                        ball.GetPosition().x - Ball.RADIUS < screenSize.x / 2 - (PoolTable.TABLE_WIDTH + buffer)/ 2 ||
+                        ball.GetPosition().y + Ball.RADIUS > screenSize.y / 2 + (PoolTable.TABLE_HEIGHT + buffer) / 2 ||
+                        ball.GetPosition().y - Ball.RADIUS < screenSize.y / 2 - (PoolTable.TABLE_HEIGHT + buffer) / 2;
                 if (outOfBounds) {
                     ballsToRemove.add(ball);
                 }
@@ -122,7 +122,7 @@ public class PhysicsEngine {
     public boolean IsBallInArea(Vector position, float radius) {
         for (ICollider collider : colliders) {
             if (collider instanceof Ball ball) {
-                if (ball.GetPosition().distance(position) <= radius + ball.GetRadius()) {
+                if (ball.GetPosition().distance(position) <= radius + Ball.RADIUS) {
                     return true;
                 }
             }

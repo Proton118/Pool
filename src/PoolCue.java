@@ -28,7 +28,7 @@ public class PoolCue {
 
         Vector cuePosition = cueBall.GetPosition().multiply(PPI);
         Vector cueMouseDirection = cuePosition.subtract(new Vector(app.mouseX, app.mouseY)).normalize();
-        startPosition = cuePosition.subtract(cueMouseDirection.multiply(cueBall.GetRadius() * PPI + 10));
+        startPosition = cuePosition.subtract(cueMouseDirection.multiply(Ball.RADIUS * PPI + 10));
 
         app.fill(255);
         app.circle(startPosition.x, startPosition.y, 10);
