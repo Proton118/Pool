@@ -24,6 +24,15 @@ public class PhysicsEngine {
         this.colliders.addAll(colliders);
         return this;
     }
+    public void ClearBalls(){
+        ArrayList<ICollider> ballsToRemove = new ArrayList<>();
+        for (ICollider collider : colliders) {
+            if (collider instanceof Ball) {
+                ballsToRemove.add(collider);
+            }
+        }
+        colliders.removeAll(ballsToRemove);
+    }
 
     public PhysicsEngine AddPockets(ArrayList<TablePocket> pockets) {
         this.pockets.addAll(pockets);

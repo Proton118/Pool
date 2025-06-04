@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import Utility.Color;
 import Utility.Vector;
 import processing.core.*;
 
@@ -23,6 +24,7 @@ public class App extends PApplet {
     private boolean breakShot;
 
     private PoolSaveManager saveManager;
+    private boolean startUpMainScreen = true;
 
     private enum AppState {
         MAIN_SCREEN,
@@ -83,11 +85,42 @@ public class App extends PApplet {
         textAlign(CENTER, CENTER);
         text("Pool", width / 2, height / 2);
 
-        Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 75), "Start Game", this);
+        Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 50), "Start New Game", this);
         startButton.drawText();
         // startButton.draw(new Color(255, 255, 255));
+        // continueButton.draw(new Color(255, 255, 255));
         if(startButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
             GameSetup();
+            waitingForMouseUp = true;
+            startUpMainScreen = false;
+            return;
+        }
+
+        if(startUpMainScreen){
+            if(saveManager.isSaveFileEmpty()){
+                return;
+            }
+            Button loadButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50), "Load Game", this);
+            loadButton.drawText();
+            if(loadButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+                physicsEngine.ClearBalls();
+
+                cueBall = saveManager.loadCueBall(physicsEngine);
+                ballSetup = saveManager.loadBallSetup(physicsEngine);
+
+                startUpMainScreen = false;
+                waitingForMouseUp = true;
+                breakShot = false;
+            }
+            return;
+        }
+
+        Button continueButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50), "Continue Game", this);
+        continueButton.drawText();
+        if(continueButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+            appState = AppState.GAME;
+            gamePhase = GamePhase.PLAYING;
+            getDeltaTime();
             waitingForMouseUp = true;
         }
     }
@@ -219,8 +252,12 @@ public class App extends PApplet {
                 key = 0;
             } else {
                 appState = AppState.MAIN_SCREEN;
-                saveManager.SavePoolGame(cueBall, ballSetup);
                 key = 0;
+                if(!breakShot){
+                    saveManager.SavePoolGame(cueBall, ballSetup, physicsEngine);
+                } else {
+                    saveManager.ClearSaveFile();
+                }
             }
         }
     }
