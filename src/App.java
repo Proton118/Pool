@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-import Utility.Color;
 import Utility.Vector;
 import processing.core.*;
 
@@ -87,8 +86,6 @@ public class App extends PApplet {
 
         Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 50), "Start New Game", this);
         startButton.drawText();
-        // startButton.draw(new Color(255, 255, 255));
-        // continueButton.draw(new Color(255, 255, 255));
         if(startButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
             GameSetup();
             waitingForMouseUp = true;
@@ -151,23 +148,8 @@ public class App extends PApplet {
             if (collider instanceof Ball) {
                 Ball ball = (Ball) collider;
                 DrawBall(ball);
-            } else if (collider instanceof Wall) {
-                // float PPI = PoolTable.PIXELS_PER_INCH;
-                // Wall wall = (Wall) collider;
-                // fill(255);
-                // rect(wall.GetPosition().x * PPI - wall.GetWidth() / 2 * PPI,
-                // wall.GetPosition().y * PPI - wall.GetHeight() / 2 * PPI,
-                // wall.GetWidth() * PPI, wall.GetHeight() * PPI);
             }
         }
-        // float PPI = PoolTable.PIXELS_PER_INCH;
-        // for(TablePocket pocket : physicsEngine.GetPockets()) {
-        // fill(255);
-        // circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
-        // pocket.GetRadius() * 2 * PPI);
-        // circle(pocket.GetPosition().x * PPI, pocket.GetPosition().y * PPI,
-        // pocket.GetRadius() * 2 * PPI);
-        // }
     }
 
     public void DrawBall(Ball ball) {

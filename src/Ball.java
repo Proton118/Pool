@@ -62,33 +62,6 @@ public class Ball implements ICollider {
         return FRICTION_CONSTANT * mass * -GRAVITY;
     }
 
-    /**
-     * Handle collision with another collider
-     * 
-     * @param other          The other collider to handle collision with
-     * @param pointOfContact The point of contact between the two colliders
-     */
-    @Override
-    public void OnCollision(ICollider other, Vector pointOfContact) {
-        MoveToSurface(pointOfContact);
-        // Bounce(pointOfContact);
-    }
-
-    /**
-     * Move the ball to the surface of the collider it is colliding with
-     * 
-     * @param pointOfContact The point of contact between the two colliders
-     */
-    public void MoveToSurface(Vector pointOfContact) {
-        Vector direction = position.subtract(pointOfContact).normalize();
-        position = pointOfContact.add(direction.multiply(RADIUS + SURFACE_TOLERANCE));
-    }
-
-    public void MoveToSurfaceWall(Vector pointOfContact, Vector wallNormal) {
-        Vector offset = wallNormal.multiply(-RADIUS + SURFACE_TOLERANCE);
-        position = pointOfContact.add(offset);
-    }
-
     public void SetPosition(Vector position) {
         this.position = position;
     }

@@ -25,7 +25,7 @@ public final class CollisionCalculator {
         return new CollisionData(false);
     }
 
-    public static CollisionData CalculateWallCollision(Ball ball, Wall wall) { //TODO: Abstract some of this out to make it simpler
+    public static CollisionData CalculateWallCollision(Ball ball, Wall wall) {
         Vector circleDistance = new Vector(Math.abs(ball.GetPosition().x - wall.GetPosition().x),
                 Math.abs(ball.GetPosition().y - wall.GetPosition().y));
 
@@ -40,14 +40,14 @@ public final class CollisionCalculator {
             int contactDirection = ball.GetPosition().y > wall.GetPosition().y ? 1 : -1;
             Vector pointOfContact = new Vector(ball.GetPosition().x,
                     wall.GetPosition().y + wall.GetHeight() / 2 * contactDirection);
-            Vector wallNormal = new Vector(0, -contactDirection); // Perpendicular to the direction vector
+            Vector wallNormal = new Vector(0, -contactDirection);
             return new CollisionData(true, pointOfContact, wallNormal);
         }
         if (circleDistance.y <= wall.GetHeight() / 2) {
             int contactDirection = ball.GetPosition().x > wall.GetPosition().x ? 1 : -1;
             Vector pointOfContact = new Vector(wall.GetPosition().x + wall.GetWidth() / 2 * contactDirection,
                     ball.GetPosition().y);
-            Vector wallNormal = new Vector(-contactDirection, 0); // Perpendicular to the direction vector
+            Vector wallNormal = new Vector(-contactDirection, 0); 
             return new CollisionData(true, pointOfContact, wallNormal);
         }
 
