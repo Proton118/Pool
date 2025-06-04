@@ -1,4 +1,8 @@
 package Utility;
+
+/**
+ * A class representing a color in RGB format.
+ */
 public class Color {
     public static final Color WHITE = new Color(255, 255, 255);
     public static final Color GRAY = new Color(128, 128, 128);
@@ -16,6 +20,13 @@ public class Color {
     public float g;
     public float b;
 
+    /**
+     * Constructs a Color with specified RGB values.
+     *
+     * @param r Red component (0-255)
+     * @param g Green component (0-255)
+     * @param b Blue component (0-255)
+     */
     public Color(float r, float g, float b) {
         this.r = r;
         this.g = g;

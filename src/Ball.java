@@ -1,34 +1,43 @@
 import Utility.Color;
 import Utility.Vector;
 
+/**
+ * A class representing a ball in a pool game.
+ */
 public class Ball implements ICollider {
     public static final float RADIUS = 2.25f;
+    public static final float MASS = 0.17f;
 
     private static final float FRICTION_CONSTANT = 0.14f;
     private static final float GRAVITY = 386;
-    private static final float SURFACE_TOLERANCE = 0.05f;
 
     private Vector position;
     private Vector velocity;
-    private float acceleration;
-    private float mass;
     private Color color;
     private int ballNumber;
-    private int previousCollisionNumber = 0;
 
-    public Ball(Color color, int ballNumber, Vector position, float mass) {
+    /**
+     * Constructs a Ball.
+     * 
+     * @param color      The color of the ball
+     * @param ballNumber The number of the ball
+     * @param position   the position to start the ball at
+     */
+    public Ball(Color color, int ballNumber, Vector position) {
         this.position = position;
-        this.mass = mass;
         this.velocity = new Vector(0, 0);
-        this.acceleration = 0;
         this.color = color;
         this.ballNumber = ballNumber;
     }
-    public Ball(Vector position, float mass) {
+
+    /**
+     * Constructs a white cue ball with no number.
+     * 
+     * @param position the position to start the ball at
+     */
+    public Ball(Vector position) {
         this.position = position;
-        this.mass = mass;
         this.velocity = new Vector(0, 0);
-        this.acceleration = 0;
         this.color = Color.WHITE;
         this.ballNumber = -1;
     }
@@ -40,13 +49,12 @@ public class Ball implements ICollider {
      */
     @Override
     public void Update(float deltaTime) {
-        acceleration = 0;
-        acceleration += GetFriction() / mass;
+        float acceleration = GRAVITY * FRICTION_CONSTANT * -1;
 
         Vector originalDirection = velocity.normalize();
         velocity = velocity.add(velocity.normalize().multiply(acceleration * deltaTime));
         Vector newDirection = velocity.normalize();
-        if(!originalDirection.directionOf(newDirection)){
+        if (!originalDirection.directionOf(newDirection)) {
             velocity = new Vector(0, 0);
         }
 
@@ -54,14 +62,10 @@ public class Ball implements ICollider {
     }
 
     /**
-     * Get the friction force acting on the ball
+     * Set the position of the ball
      * 
-     * @return The friction force
+     * @param position the position to set the ball to
      */
-    public float GetFriction() {
-        return FRICTION_CONSTANT * mass * -GRAVITY;
-    }
-
     public void SetPosition(Vector position) {
         this.position = position;
     }
@@ -76,10 +80,12 @@ public class Ball implements ICollider {
         this.velocity = velocity;
         return this;
     }
-    public ICollider SetVelocity(float velocity) {
-        this.velocity = this.velocity.normalize().multiply(velocity);
-        return this;
-    }
+
+    /**
+     * Get the velocity of the ball
+     * 
+     * @return The current velocity vector of the ball
+     */
     public Vector GetVelocity() {
         return velocity;
     }
@@ -101,6 +107,7 @@ public class Ball implements ICollider {
     public Color GetColor() {
         return color;
     }
+
     /**
      * The Number of the ball
      * 
@@ -108,16 +115,5 @@ public class Ball implements ICollider {
      */
     public int GetBallNumber() {
         return ballNumber;
-    }
-
-    public float GetMass() {
-        return mass;
-    }
-
-    public void SetPreviousCollisionNumber(int previousCollisionNumber) {
-        this.previousCollisionNumber = previousCollisionNumber;
-    }
-    public int GetPreviousCollisionNumber() {
-        return previousCollisionNumber;
     }
 }

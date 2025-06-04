@@ -30,11 +30,12 @@ public class App extends PApplet {
         GAME,
         GAME_OVER
     }
-    public enum GamePhase{
+
+    private enum GamePhase {
         PLAYING,
         CUE_FIRING,
         CUE_ANIMATION,
-        PLACE_BALL, 
+        PLACE_BALL,
         PAUSED,
     }
 
@@ -59,7 +60,7 @@ public class App extends PApplet {
     }
 
     public void draw() {
-        if(!mousePressed && waitingForMouseUp) {
+        if (!mousePressed && waitingForMouseUp) {
             waitingForMouseUp = false;
         }
         switch (appState) {
@@ -84,22 +85,24 @@ public class App extends PApplet {
         textAlign(CENTER, CENTER);
         text("Pool", width / 2, height / 2);
 
-        Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 50), "Start New Game", this);
+        Button startButton = new Button(new Vector(width / 2, height / 2 + 100), new Vector(400, 50), "Start New Game",
+                this);
         startButton.drawText();
-        if(startButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+        if (startButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
             GameSetup();
             waitingForMouseUp = true;
             startUpMainScreen = false;
             return;
         }
 
-        if(startUpMainScreen){
-            if(saveManager.isSaveFileEmpty()){
+        if (startUpMainScreen) {
+            if (saveManager.isSaveFileEmpty()) {
                 return;
             }
-            Button loadButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50), "Load Game", this);
+            Button loadButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50), "Load Game",
+                    this);
             loadButton.drawText();
-            if(loadButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+            if (loadButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
                 physicsEngine.ClearBalls();
 
                 cueBall = saveManager.loadCueBall(physicsEngine);
@@ -112,9 +115,10 @@ public class App extends PApplet {
             return;
         }
 
-        Button continueButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50), "Continue Game", this);
+        Button continueButton = new Button(new Vector(width / 2, height / 2 + 160), new Vector(400, 50),
+                "Continue Game", this);
         continueButton.drawText();
-        if(continueButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
+        if (continueButton.isMouseOver() && mousePressed && !waitingForMouseUp) {
             appState = AppState.GAME;
             gamePhase = GamePhase.PLAYING;
             getDeltaTime();
@@ -135,13 +139,13 @@ public class App extends PApplet {
         textSize(120);
         textAlign(CENTER, CENTER);
         text("Game Over!", width / 2, height / 2);
-        if(mousePressed) {
+        if (mousePressed) {
             appState = AppState.MAIN_SCREEN;
             waitingForMouseUp = true;
         }
     }
 
-    public void DrawColliders() {
+    private void DrawColliders() {
         ArrayList<ICollider> colliders = physicsEngine.GetColliders();
         noStroke();
         for (ICollider collider : colliders) {
@@ -152,7 +156,7 @@ public class App extends PApplet {
         }
     }
 
-    public void DrawBall(Ball ball) {
+    private void DrawBall(Ball ball) {
         float PPI = PoolTable.PIXELS_PER_INCH;
         fill(ball.GetColor().r, ball.GetColor().g, ball.GetColor().b);
         circle(ball.GetPosition().x * PPI, ball.GetPosition().y * PPI, Ball.RADIUS * 2 * PPI);
@@ -166,7 +170,7 @@ public class App extends PApplet {
         }
     }
 
-    public boolean AreAllBallsAtRest() {
+    private boolean AreAllBallsAtRest() {
         for (ICollider collider : physicsEngine.GetColliders()) {
             if (collider instanceof Ball) {
                 Ball ball = (Ball) collider;
@@ -178,8 +182,8 @@ public class App extends PApplet {
         return true;
     }
 
-    public void UpdateCueBall() {
-        if(waitingForMouseUp) {
+    private void UpdateCueBall() {
+        if (waitingForMouseUp) {
             return;
         }
         Vector fireVector;
@@ -189,14 +193,13 @@ public class App extends PApplet {
             fireVector = cue.UpdateCue(cueBall);
         }
         if (fireVector != null) {
-            cueBall.SetPreviousCollisionNumber(0);
             cueBall.SetVelocity(fireVector);
             gamePhase = GamePhase.CUE_ANIMATION;
             breakShot = false;
         }
     }
 
-    public void PlaceBall() {
+    private void PlaceBall() {
         float PPI = PoolTable.PIXELS_PER_INCH;
 
         boolean cueBallCollidingWithOtherBall = physicsEngine.IsBallInArea(new Vector(mouseX / PPI, mouseY / PPI),
@@ -215,7 +218,6 @@ public class App extends PApplet {
         if (mousePressed && !waitingForMouseUp) {
             cueBall.SetPosition(new Vector(mouseX / PPI, mouseY / PPI));
             cueBall.SetVelocity(new Vector(0, 0));
-            cueBall.SetPreviousCollisionNumber(0);
             physicsEngine.AddCollider(cueBall);
             gamePhase = GamePhase.CUE_FIRING;
         }
@@ -224,10 +226,12 @@ public class App extends PApplet {
     }
 
     @Override
-    public void keyPressed(){
-        if(key == ESC){
-            if(appState != AppState.GAME) { return;}
-            if(gamePhase != GamePhase.PAUSED){
+    public void keyPressed() {
+        if (key == ESC) {
+            if (appState != AppState.GAME) {
+                return;
+            }
+            if (gamePhase != GamePhase.PAUSED) {
                 gamePhase = GamePhase.PAUSED;
                 cue.ResetCue();
                 waitingForMouseUp = true;
@@ -235,7 +239,7 @@ public class App extends PApplet {
             } else {
                 appState = AppState.MAIN_SCREEN;
                 key = 0;
-                if(!breakShot){
+                if (!breakShot) {
                     saveManager.SavePoolGame(cueBall, ballSetup, physicsEngine);
                 } else {
                     saveManager.ClearSaveFile();
@@ -244,25 +248,25 @@ public class App extends PApplet {
         }
     }
 
-    public void DrawGamePhase(){
+    private void DrawGamePhase() {
         GameBase();
 
         float deltaTime = getDeltaTime();
 
-        switch(gamePhase) {
+        switch (gamePhase) {
             case PLAYING:
                 physicsEngine.UpdateColliderPositions(deltaTime);
                 physicsEngine.HandleCollisions();
                 physicsEngine.CheckPockets();
                 physicsEngine.CheckOutOfBounds(new Vector(width, height));
 
-                if(physicsEngine.IsBallInPocket(ballSetup.GetEightBall())){
+                if (physicsEngine.IsBallInPocket(ballSetup.GetEightBall())) {
                     appState = AppState.GAME_OVER;
                     saveManager.ClearSaveFile();
                     break;
                 }
 
-                if(AreAllBallsAtRest()){
+                if (AreAllBallsAtRest()) {
                     gamePhase = GamePhase.CUE_FIRING;
                 }
                 break;
@@ -287,29 +291,29 @@ public class App extends PApplet {
                 textSize(50);
                 textAlign(CENTER, CENTER);
                 text("PAUSED", width / 2, height / 2 - 30);
-                textSize(25);
+                textSize(35);
                 text("Click to Resume or esc again to quit to main menu", width / 2, height / 2 + 50);
-                if(mousePressed && !waitingForMouseUp){
+                if (mousePressed && !waitingForMouseUp) {
                     gamePhase = GamePhase.PLAYING;
                     waitingForMouseUp = true;
                 }
                 break;
-            
+
         }
 
         DrawColliders();
     }
 
-    public void GameBase(){
+    private void GameBase() {
         background(180);
         int tableWidth = 1400;
         int tableHeight = 700;
         image(table.GetTableImage(), width / 2 - tableWidth / 2, height / 2 - tableHeight / 2, tableWidth, tableHeight);
     }
 
-    public void GameSetup(){
+    private void GameSetup() {
         float PPI = PoolTable.PIXELS_PER_INCH;
-        cueBall = new Ball(new Vector((width / 2 + 320) / PPI, height / 2 / PPI), 0.17f);
+        cueBall = new Ball(new Vector((width / 2 + 320) / PPI, height / 2 / PPI));
         ballSetup = new BallSetup(new Vector((width / 2 - 320) / PPI, height / 2 / PPI));
 
         physicsEngine = new PhysicsEngine();
@@ -322,12 +326,11 @@ public class App extends PApplet {
         appState = AppState.GAME;
         gamePhase = GamePhase.CUE_FIRING;
 
-
         previousTime = System.currentTimeMillis();
     }
 
-    public float getDeltaTime() {
-        float deltaTime =(System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
+    private float getDeltaTime() {
+        float deltaTime = (System.currentTimeMillis() - previousTime) / 1000f * TIME_SCALE;
         previousTime = System.currentTimeMillis();
         return deltaTime;
     }
