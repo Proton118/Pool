@@ -56,16 +56,18 @@ public class PhysicsEngine {
     }
 
     private void CheckCollision(ICollider a, ICollider b) {
-        float ballStep = 0.000015f;
-        int ballRecursionDepth = 11000;
+        float ballStep = 1.2f;
+        int ballRecursionDepth = 5000;
+        float ballStartingMagnitude = 1;
 
-        float wallStep = 0.001f;
-        int wallRecursionDepth = 10000;
+        float wallStep = 1.2f;
+        int wallRecursionDepth = 5000;
+        float wallStartingMagnitude = 1;
 
         if (a instanceof Ball ballA && b instanceof Ball ballB) {
             CollisionData isCollided = CollisionCalculator.CalculateBallCollision(ballA, ballB);
             if (isCollided.GetCollided()) {
-                CollisionData collisionData = RecursivelyFindCollisionPoint(ballA, ballB, ballStep, ballRecursionDepth);
+                CollisionData collisionData = RecursivelyFindCollisionPoint(ballA, ballB, ballStep, ballRecursionDepth, ballStartingMagnitude);
 
                 HandleBallCollision(ballA, ballB, collisionData);
                 ballA.SetPreviousCollisionNumber(ballB.GetBallNumber());
@@ -76,7 +78,7 @@ public class PhysicsEngine {
         if (a instanceof Wall wall && b instanceof Ball ball) {
             CollisionData isCollided = CollisionCalculator.CalculateWallCollision(ball, wall);
             if (isCollided.GetCollided()) {
-                CollisionData collisionData = RecursivelyFindCollisionPoint(ball, wall, wallStep, wallRecursionDepth);
+                CollisionData collisionData = RecursivelyFindCollisionPoint(ball, wall, wallStep, wallRecursionDepth, wallStartingMagnitude);
 
                 HandleWallCollision(ball, collisionData);
                 ClearCollisionNumbers();
@@ -86,7 +88,7 @@ public class PhysicsEngine {
         if (a instanceof Ball ball && b instanceof Wall wall) {
             CollisionData isCollided = CollisionCalculator.CalculateWallCollision(ball, wall);
             if (isCollided.GetCollided()) {
-                CollisionData collisionData = RecursivelyFindCollisionPoint(ball, wall, wallStep, wallRecursionDepth);
+                CollisionData collisionData = RecursivelyFindCollisionPoint(ball, wall, wallStep, wallRecursionDepth, wallStartingMagnitude);
                 
                 HandleWallCollision(ball, collisionData);
                 ClearCollisionNumbers();
@@ -210,38 +212,44 @@ public class PhysicsEngine {
         }
     }
 
-    private CollisionData RecursivelyFindCollisionPoint(Ball ballA, Ball ballB, float step, int recursionDeath){
-        if (recursionDeath <= 0) {
-            System.out.println("Max recursion depth reached for ball collision");
+    private CollisionData RecursivelyFindCollisionPoint(Ball ballA, Ball ballB, float step, int depth, float startingMagnitude){
+        if(step <= 1){
+            throw new IllegalArgumentException("Step must be greater than 1");
+        }
+        if (depth <= 0) {
             return CollisionCalculator.CalculateBallCollision(ballA, ballB);
         }
         if(ballA.GetVelocity().magnitude() == 0 && ballB.GetVelocity().magnitude() == 0){
-            ballA.SetPosition(ballA.GetPosition().add(new Vector(-1, 0).multiply(-step)));
-            ballB.SetPosition(ballB.GetPosition().add(new Vector(1, 0).multiply(-step)));
+            ballA.SetPosition(ballA.GetPosition().add(new Vector(-1, 0).multiply(-startingMagnitude)));
+            ballB.SetPosition(ballB.GetPosition().add(new Vector(1, 0).multiply(-startingMagnitude)));
+            CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
+            if(!collisionData.GetCollided()){
+                ballA.SetPosition(ballA.GetPosition().add(new Vector(-1, 0).multiply(startingMagnitude)));
+                ballB.SetPosition(ballB.GetPosition().add(new Vector(1, 0).multiply(startingMagnitude)));
+            }
         } else {
-            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-step)));
-            ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().multiply(-step)));
+            ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(-startingMagnitude)));
+            ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().multiply(-startingMagnitude)));
+            CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
+            if(!collisionData.GetCollided()){
+                ballA.SetPosition(ballA.GetPosition().add(ballA.GetVelocity().multiply(startingMagnitude)));
+                ballB.SetPosition(ballB.GetPosition().add(ballB.GetVelocity().multiply(startingMagnitude)));
+            }
         }
-        CollisionData collisionData = CollisionCalculator.CalculateBallCollision(ballA, ballB);
-        if(!collisionData.GetCollided()) {
-            return collisionData;
-        } else {
-            return RecursivelyFindCollisionPoint(ballA, ballB, step, recursionDeath - 1);
-        }
+        return RecursivelyFindCollisionPoint(ballA, ballB, step, depth - 1, startingMagnitude / step);
     }
-    private CollisionData RecursivelyFindCollisionPoint(Ball ball, Wall wall, float step, int recursionDeath){
-        if (recursionDeath <= 0) {
-            System.out.println("Max recursion depth reached for wall collision");
+    private CollisionData RecursivelyFindCollisionPoint(Ball ball, Wall wall, float step, int depth, float startingMagnitude){
+        if(step <= 1){
+            throw new IllegalArgumentException("Step must be greater than 1");
+        }
+        if (depth <= 0) {
             return CollisionCalculator.CalculateWallCollision(ball, wall);
         }
-        ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().normalize().multiply(-step)));
+        ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().multiply(-startingMagnitude)));
         CollisionData collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
         if(!collisionData.GetCollided()) {
-            ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().normalize().multiply(step)));
-            collisionData = CollisionCalculator.CalculateWallCollision(ball, wall);
-            return collisionData;
-        } else {
-            return RecursivelyFindCollisionPoint(ball, wall, step, recursionDeath - 1);
+            ball.SetPosition(ball.GetPosition().add(ball.GetVelocity().multiply(startingMagnitude)));
         }
+        return RecursivelyFindCollisionPoint(ball, wall, step, depth - 1, startingMagnitude / step);
     }
 }
