@@ -5,6 +5,7 @@ import processing.core.*;
 
 public class App extends PApplet {
     private static final float TIME_SCALE = 1 / 2.2f;
+    private static final String SAVE_FILE_NAME = "savedGame.txt";
 
     private AppState appState;
     private GamePhase gamePhase;
@@ -20,6 +21,8 @@ public class App extends PApplet {
     private PoolTable table;
 
     private boolean breakShot;
+
+    private PoolSaveManager saveManager;
 
     private enum AppState {
         MAIN_SCREEN,
@@ -50,6 +53,8 @@ public class App extends PApplet {
 
         GameSetup();
         appState = AppState.MAIN_SCREEN;
+
+        saveManager = new PoolSaveManager(SAVE_FILE_NAME);
     }
 
     public void draw() {
@@ -214,6 +219,7 @@ public class App extends PApplet {
                 key = 0;
             } else {
                 appState = AppState.MAIN_SCREEN;
+                saveManager.SavePoolGame(cueBall, ballSetup);
                 key = 0;
             }
         }
@@ -233,6 +239,7 @@ public class App extends PApplet {
 
                 if(physicsEngine.IsBallInPocket(ballSetup.GetEightBall())){
                     appState = AppState.GAME_OVER;
+                    saveManager.ClearSaveFile();
                     break;
                 }
 
